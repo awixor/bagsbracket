@@ -75,7 +75,9 @@ export default function BracketPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="text-[#f5c542] text-lg animate-pulse">Loading bracket...</div>
+        <div className="text-[#f5c542] text-lg animate-pulse">
+          Loading bracket...
+        </div>
       </div>
     );
   }
@@ -83,7 +85,9 @@ export default function BracketPage() {
   if (error || !tournament) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center flex-col gap-4">
-        <div className="text-red-400 text-lg">{error ?? "Tournament not found"}</div>
+        <div className="text-red-400 text-lg">
+          {error ?? "Tournament not found"}
+        </div>
         <Link href="/" className="text-[#f5c542] underline">
           Back to home
         </Link>
@@ -93,19 +97,27 @@ export default function BracketPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      {/* Nav */}
       <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-[#f5c542] font-black text-xl tracking-tight">
+        <Link
+          href="/"
+          className="text-[#f5c542] font-black text-xl tracking-tight"
+        >
           BagsBracket
         </Link>
-        <WalletButton />
+        <div className="flex items-center gap-4">
+          <Link href="/demo" className="text-white/50 text-sm hover:text-white transition-colors">
+            Demo
+          </Link>
+          <WalletButton />
+        </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Tournament header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-2xl font-black text-white">{tournament.name}</h1>
+            <h1 className="text-2xl font-black text-white">
+              {tournament.name}
+            </h1>
             <span
               className={`text-xs font-bold uppercase px-2 py-0.5 rounded-full ${
                 tournament.status === "active"
@@ -120,7 +132,8 @@ export default function BracketPage() {
           </div>
           {lastUpdated && (
             <p className="text-white/30 text-xs">
-              Last updated: {lastUpdated.toLocaleTimeString()} · auto-refreshes every 60s
+              Last updated: {lastUpdated.toLocaleTimeString()} · auto-refreshes
+              every 60s
             </p>
           )}
         </div>
@@ -130,7 +143,7 @@ export default function BracketPage() {
           <div className="flex-1 min-w-0">
             <Bracket tournament={tournament} onVote={handleVote} />
           </div>
-          <div className="xl:w-72 flex-shrink-0">
+          <div className="xl:w-72 shrink-0">
             <Leaderboard tournament={tournament} />
           </div>
         </div>
