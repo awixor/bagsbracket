@@ -32,3 +32,19 @@ export type Tournament = {
   currentRound: number;
   createdAt: Date;
 };
+
+export type RegistrationStatus = "pending" | "approved" | "rejected";
+
+export type TokenRegistration = {
+  id: string;
+  mint: string;
+  name: string;
+  symbol: string;
+  logo: string;
+  holders: number;
+  submittedAt: string;
+  submittedBy?: string;
+  status: RegistrationStatus;
+  reviewedAt?: string;
+  tournamentId?: string;
+};
