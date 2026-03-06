@@ -57,7 +57,7 @@ function TokenSide({
   side: "A" | "B";
 }) {
   const [voting, setVoting] = useState(false);
-  const tradeUrl = `https://bags.fm/trade?outputMint=${token.mint}`;
+  const tradeUrl = `https://bags.fm/${token.mint}`;
 
   async function handleVote() {
     if (!onVote) return;

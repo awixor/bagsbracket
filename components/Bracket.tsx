@@ -10,15 +10,12 @@ interface BracketProps {
   onVote?: (matchId: string, tokenMint: string) => Promise<void>;
 }
 
-const ROUND_NAMES: Record<number, string> = {
-  1: "Quarterfinals",
-  2: "Semifinals",
-  3: "Final",
-};
-
 function getRoundName(round: number, totalRounds: number): string {
-  const relativeRound = totalRounds - round + 1;
-  return ROUND_NAMES[relativeRound] ?? `Round ${round}`;
+  const fromEnd = totalRounds - round + 1;
+  if (fromEnd === 1) return "Final";
+  if (fromEnd === 2) return "Semifinals";
+  if (fromEnd === 3) return "Quarterfinals";
+  return `Round ${round}`;
 }
 
 // Desktop bracket column
@@ -27,15 +24,18 @@ function BracketColumn({
   round,
   currentRound,
   totalRounds,
+  placeholderCount,
   onVote,
 }: {
   matches: Match[];
   round: number;
   currentRound: number;
   totalRounds: number;
+  placeholderCount: number;
   onVote?: (matchId: string, tokenMint: string) => Promise<void>;
 }) {
   const isActive = round === currentRound;
+  const isEmpty = matches.length === 0;
 
   return (
     <div className="flex min-w-65 flex-1 flex-col justify-around">
@@ -51,18 +51,27 @@ function BracketColumn({
         </span>
       </div>
       <div className="flex flex-1 flex-col justify-around gap-4">
-        {matches.map((match) => (
-          <div
-            key={match.id}
-            className={`rounded-2xl p-3 transition-all ${
-              isActive
-                ? "border border-[#f5c542]/30 bg-black/40"
-                : "border border-white/10 bg-black/20"
-            }`}
-          >
-            <MatchCard match={match} isActive={isActive} onVote={onVote} />
-          </div>
-        ))}
+        {isEmpty
+          ? Array.from({ length: placeholderCount }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-white/5 bg-black/10 p-6 text-center text-xs text-white/20"
+              >
+                TBD
+              </div>
+            ))
+          : matches.map((match) => (
+              <div
+                key={match.id}
+                className={`rounded-2xl p-3 transition-all ${
+                  isActive
+                    ? "border border-[#f5c542]/30 bg-black/40"
+                    : "border border-white/10 bg-black/20"
+                }`}
+              >
+                <MatchCard match={match} isActive={isActive} onVote={onVote} />
+              </div>
+            ))}
       </div>
     </div>
   );
@@ -118,23 +127,23 @@ export default function Bracket({ tournament, onVote }: BracketProps) {
     roundMap[match.round].push(match);
   }
 
-  const rounds = Object.keys(roundMap)
-    .map(Number)
-    .sort((a, b) => a - b);
+  // Always render all rounds so future rounds show as placeholder columns
+  const rounds = Array.from({ length: totalRounds }, (_, i) => i + 1);
 
   return (
     <div className="w-full">
       <WinnerBanner tournament={tournament} />
 
       {/* Desktop: side-by-side columns */}
-      <div className="hidden items-stretch gap-4 overflow-x-auto pb-4 md:flex">
+      <div className="hidden min-h-175 items-stretch gap-4 overflow-x-auto pb-4 md:flex">
         {rounds.map((round) => (
           <BracketColumn
             key={round}
-            matches={roundMap[round]}
+            matches={roundMap[round] ?? []}
             round={round}
             currentRound={tournament.currentRound}
             totalRounds={totalRounds}
+            placeholderCount={tournament.size / Math.pow(2, round)}
             onVote={onVote}
           />
         ))}
@@ -148,7 +157,7 @@ export default function Bracket({ tournament, onVote }: BracketProps) {
             <button
               key={round}
               onClick={() => setMobileRound(round)}
-              className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold transition-all ${
+              className={`shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-bold transition-all ${
                 mobileRound === round
                   ? "bg-[#f5c542] text-[#0a0a0a]"
                   : "bg-white/10 text-white/60 hover:bg-white/20"
