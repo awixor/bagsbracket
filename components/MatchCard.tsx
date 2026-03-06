@@ -57,7 +57,7 @@ function TokenSide({
   side: "A" | "B";
 }) {
   const [voting, setVoting] = useState(false);
-  const tradeUrl = `https://bags.fm/token/${token.mint}`;
+  const tradeUrl = `https://bags.fm/trade?outputMint=${token.mint}`;
 
   async function handleVote() {
     if (!onVote) return;
@@ -130,7 +130,7 @@ function TokenSide({
             <button
               onClick={handleVote}
               disabled={voting}
-              className="rounded-lg border border-white/20 py-1.5 text-xs font-medium text-white/70 transition-colors hover:border-[#f5c542]/50 hover:text-[#f5c542] disabled:opacity-50"
+              className="cursor-pointer rounded-lg border border-white/20 py-1.5 text-xs font-medium text-white/70 transition-colors hover:border-[#f5c542]/50 hover:text-[#f5c542] disabled:opacity-50"
             >
               {voting ? "Voting..." : "Vote"}
             </button>
