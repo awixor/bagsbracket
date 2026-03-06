@@ -19,18 +19,86 @@ body {
   font-family: var(--font-geist-sans, Arial, Helvetica, sans-serif);
 }
 
-/* Wallet adapter modal overrides */
-.wallet-adapter-modal-wrapper {
-  background: #111 !important;
-}
-
-.wallet-adapter-button {
+/* ── Wallet adapter — header connect button ── */
+.wallet-adapter-button-trigger {
   background-color: #f5c542 !important;
   color: #0a0a0a !important;
   font-weight: 700 !important;
   border-radius: 8px !important;
+  height: 40px !important;
 }
 
-.wallet-adapter-button:hover {
+.wallet-adapter-button-trigger:hover {
   background-color: #e0b030 !important;
+}
+
+/* ── Wallet adapter — modal ── */
+.wallet-adapter-modal-wrapper {
+  background: #141414 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 20px !important;
+  padding: 8px !important;
+}
+
+.wallet-adapter-modal-overlay {
+  background: rgba(0, 0, 0, 0.75) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.wallet-adapter-modal-title {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  padding: 16px 16px 8px !important;
+}
+
+.wallet-adapter-modal-list {
+  background: transparent !important;
+  padding: 8px 16px 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.wallet-adapter-modal-list li {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Wallet list items — dark, NOT gold */
+.wallet-adapter-modal-list .wallet-adapter-button {
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+  font-weight: 500 !important;
+  width: 100% !important;
+  padding: 14px 16px !important;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button:hover {
+  background-color: #2a2a2a !important;
+  border-color: rgba(245, 197, 66, 0.4) !important;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button-end-icon,
+.wallet-adapter-modal-list .wallet-adapter-button p {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* "Less options" toggle */
+.wallet-adapter-modal-list-more {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.wallet-adapter-modal-list-more:hover {
+  color: #f5c542 !important;
+}
+
+/* Close button */
+.wallet-adapter-modal-button-close {
+  background: #2a2a2a !important;
+}
+
+.wallet-adapter-modal-button-close:hover {
+  background: #383838 !important;
 }
