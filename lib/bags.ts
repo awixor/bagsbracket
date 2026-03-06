@@ -140,16 +140,80 @@ export interface BagsPool {
 
 /**
  * Fetch the Bags pool for a given token mint.
- * Endpoint: GET /solana/bags/pools/token-mint?tokenMint={mint}
+ * Endpoint: GET /bags-pool-by-token-mint/:mint
  */
 export async function getBagsPool(mint: string): Promise<BagsPool | null> {
   if (!BAGS_API_KEY) return null;
   const res = await fetch(
-    `${BAGS_API}/solana/bags/pools/token-mint?tokenMint=${mint}`,
+    `${BAGS_API}/bags-pool-by-token-mint/${mint}`,
     { headers: bagsHeaders(), next: { revalidate: 300 } },
   );
   if (!res.ok) return null;
   return res.json();
+}
+
+// ---------------------------------------------------------------------------
+// Bags.fm API — fee-based match scoring
+// ---------------------------------------------------------------------------
+
+export interface TokenLifetimeFees {
+  mint: string;
+  lifetimeFees: number; // cumulative fees in SOL; 1% of all trading volume
+}
+
+/**
+ * Fetch cumulative lifetime fees for a token.
+ * Since creators earn 1% of all trading volume, fees are a direct proxy for volume.
+ * Endpoint: GET /token-lifetime-fees/:mint
+ */
+export async function getTokenLifetimeFees(
+  mint: string,
+): Promise<TokenLifetimeFees | null> {
+  if (!BAGS_API_KEY) return null;
+  const res = await fetch(`${BAGS_API}/token-lifetime-fees/${mint}`, {
+    headers: bagsHeaders(),
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
+
+export interface TokenClaimEvent {
+  timestamp: string; // ISO date
+  amount: number;    // fees claimed in this event
+}
+
+/**
+ * Fetch individual claim events with timestamps.
+ * Use to calculate fee delta within a specific match time window.
+ * Endpoint: GET /token-claim-events/:mint
+ */
+export async function getTokenClaimEvents(
+  mint: string,
+): Promise<TokenClaimEvent[]> {
+  if (!BAGS_API_KEY) return [];
+  const res = await fetch(`${BAGS_API}/token-claim-events/${mint}`, {
+    headers: bagsHeaders(),
+  });
+  if (!res.ok) return [];
+  return res.json();
+}
+
+/**
+ * Calculate fee delta (match volume proxy) for a token within a time window.
+ * Higher delta = more trading activity during the match.
+ */
+export async function getMatchVolumeDelta(
+  mint: string,
+  startTime: Date,
+  endTime: Date,
+): Promise<number> {
+  const events = await getTokenClaimEvents(mint);
+  return events
+    .filter((e) => {
+      const t = new Date(e.timestamp).getTime();
+      return t >= startTime.getTime() && t <= endTime.getTime();
+    })
+    .reduce((sum, e) => sum + e.amount, 0);
 }
 
 export interface TradeQuote {
@@ -163,7 +227,7 @@ export interface TradeQuote {
 
 /**
  * Get a swap quote from Bags.fm.
- * Endpoint: GET /trade/quote
+ * Endpoint: GET /trade-quote
  */
 export async function getTradeQuote(
   inputMint: string,
@@ -179,7 +243,7 @@ export async function getTradeQuote(
     slippageMode: "fixed",
     slippageBps: String(slippageBps),
   });
-  const res = await fetch(`${BAGS_API}/trade/quote?${params}`, {
+  const res = await fetch(`${BAGS_API}/trade-quote?${params}`, {
     headers: bagsHeaders(),
   });
   if (!res.ok) throw new Error("Bags: trade quote failed");
