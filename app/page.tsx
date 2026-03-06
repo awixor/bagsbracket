@@ -1,6 +1,7 @@
 import Link from "next/link";
 import WalletButton from "@/components/WalletButton";
 import HowItWorks from "@/components/HowItWorks";
+import QueueStatus from "@/components/QueueStatus";
 import { SEED_TOURNAMENT } from "@/data/seed";
 
 export default function Home() {
@@ -47,6 +48,9 @@ export default function Home() {
             View Live Demo →
           </Link>
         </div>
+
+        {/* Next tournament queue */}
+        <QueueStatus />
 
         {/* Active tournament card */}
         {tournament && (
