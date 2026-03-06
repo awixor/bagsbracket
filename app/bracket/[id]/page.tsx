@@ -111,6 +111,12 @@ export default function BracketPage() {
           >
             Demo
           </Link>
+          <Link
+            href="/register"
+            className="text-sm text-white/50 transition-colors hover:text-white"
+          >
+            Register
+          </Link>
           <WalletButton />
         </div>
       </header>
