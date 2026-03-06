@@ -38,10 +38,10 @@ function BracketColumn({
   const isActive = round === currentRound;
 
   return (
-    <div className="flex flex-col justify-around flex-1 min-w-[260px]">
-      <div className="text-center mb-4">
+    <div className="flex min-w-65 flex-1 flex-col justify-around">
+      <div className="mb-4 text-center">
         <span
-          className={`text-sm font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
+          className={`rounded-full px-3 py-1 text-sm font-bold tracking-wider uppercase ${
             isActive
               ? "bg-[#f5c542]/20 text-[#f5c542]"
               : "bg-white/5 text-white/40"
@@ -50,7 +50,7 @@ function BracketColumn({
           {getRoundName(round, totalRounds)}
         </span>
       </div>
-      <div className="flex flex-col justify-around flex-1 gap-4">
+      <div className="flex flex-1 flex-col justify-around gap-4">
         {matches.map((match) => (
           <div
             key={match.id}
@@ -82,14 +82,20 @@ function WinnerBanner({ tournament }: { tournament: Tournament }) {
       : finalMatch.tokenB;
 
   return (
-    <div className="text-center py-8 px-4 rounded-2xl border border-[#f5c542] bg-[#f5c542]/10 mb-8">
-      <div className="text-[#f5c542] text-sm font-bold uppercase tracking-widest mb-2">
+    <div className="mb-8 rounded-2xl border border-[#f5c542] bg-[#f5c542]/10 px-4 py-8 text-center">
+      <div className="mb-2 text-sm font-bold tracking-widest text-[#f5c542] uppercase">
         Tournament Champion
       </div>
       <div className="flex items-center justify-center gap-4">
         {winner.logo && (
-          <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-[#f5c542]">
-            <Image src={winner.logo} alt={winner.name} fill className="object-cover" unoptimized />
+          <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-[#f5c542]">
+            <Image
+              src={winner.logo}
+              alt={winner.name}
+              fill
+              className="object-cover"
+              unoptimized
+            />
           </div>
         )}
         <div>
@@ -121,7 +127,7 @@ export default function Bracket({ tournament, onVote }: BracketProps) {
       <WinnerBanner tournament={tournament} />
 
       {/* Desktop: side-by-side columns */}
-      <div className="hidden md:flex gap-4 items-stretch overflow-x-auto pb-4">
+      <div className="hidden items-stretch gap-4 overflow-x-auto pb-4 md:flex">
         {rounds.map((round) => (
           <BracketColumn
             key={round}
@@ -137,12 +143,12 @@ export default function Bracket({ tournament, onVote }: BracketProps) {
       {/* Mobile: tabs per round */}
       <div className="md:hidden">
         {/* Round tabs */}
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
+        <div className="mb-4 flex gap-2 overflow-x-auto pb-2">
           {rounds.map((round) => (
             <button
               key={round}
               onClick={() => setMobileRound(round)}
-              className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-bold transition-all ${
+              className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold transition-all ${
                 mobileRound === round
                   ? "bg-[#f5c542] text-[#0a0a0a]"
                   : "bg-white/10 text-white/60 hover:bg-white/20"
@@ -158,7 +164,7 @@ export default function Bracket({ tournament, onVote }: BracketProps) {
           {(roundMap[mobileRound] ?? []).map((match) => (
             <div
               key={match.id}
-              className={`rounded-2xl p-3 border ${
+              className={`rounded-2xl border p-3 ${
                 mobileRound === tournament.currentRound
                   ? "border-[#f5c542]/30 bg-black/40"
                   : "border-white/10 bg-black/20"

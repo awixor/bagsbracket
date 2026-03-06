@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a0a0a] text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} bg-[#0a0a0a] text-white antialiased`}
       >
         <WalletProvider>{children}</WalletProvider>
       </body>

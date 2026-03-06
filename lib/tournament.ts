@@ -64,7 +64,9 @@ export function advanceRound(tournament: Tournament): Match[] {
 
   for (let i = 0; i < winners.length; i += 2) {
     if (winners[i + 1]) {
-      nextMatches.push(createMatch(winners[i], winners[i + 1], nextRound, startTime));
+      nextMatches.push(
+        createMatch(winners[i], winners[i + 1], nextRound, startTime),
+      );
     }
   }
   return nextMatches;

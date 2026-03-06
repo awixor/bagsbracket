@@ -9,37 +9,40 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       {/* Nav */}
-      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
-        <span className="text-[#f5c542] font-black text-xl tracking-tight">
+      <header className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+        <span className="text-xl font-black tracking-tight text-[#f5c542]">
           BagsBracket
         </span>
         <div className="flex items-center gap-4">
-          <Link href="/demo" className="text-white/50 text-sm hover:text-white transition-colors">
+          <Link
+            href="/demo"
+            className="text-sm text-white/50 transition-colors hover:text-white"
+          >
             Demo
           </Link>
           <WalletButton />
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-16 flex flex-col items-center text-center gap-10">
+      <main className="mx-auto flex max-w-5xl flex-col items-center gap-10 px-4 py-16 text-center">
         {/* Hero */}
         <div className="flex flex-col items-center gap-4">
-          <div className="inline-block bg-[#f5c542]/10 border border-[#f5c542]/30 text-[#f5c542] text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full">
+          <div className="inline-block rounded-full border border-[#f5c542]/30 bg-[#f5c542]/10 px-4 py-1.5 text-xs font-bold tracking-widest text-[#f5c542] uppercase">
             Built on Bags.fm · Solana
           </div>
-          <h1 className="text-5xl sm:text-7xl font-black tracking-tight leading-none">
+          <h1 className="text-5xl leading-none font-black tracking-tight sm:text-7xl">
             March Madness
             <br />
             <span className="text-[#f5c542]">for Crypto Tokens</span>
           </h1>
-          <p className="text-white/50 text-lg max-w-xl leading-relaxed">
+          <p className="max-w-xl text-lg leading-relaxed text-white/50">
             8 tokens enter. 1 survives. Head-to-head elimination rounds decided
             by real trading volume on Bags.fm — vote, trade, and campaign for
             your favourite token.
           </p>
           <Link
             href="/demo"
-            className="inline-block px-8 py-4 rounded-2xl bg-[#f5c542] text-[#0a0a0a] font-black text-lg hover:bg-[#f5c542]/90 transition-colors"
+            className="inline-block rounded-2xl bg-[#f5c542] px-8 py-4 text-lg font-black text-[#0a0a0a] transition-colors hover:bg-[#f5c542]/90"
           >
             View Live Demo →
           </Link>
@@ -47,20 +50,22 @@ export default function Home() {
 
         {/* Active tournament card */}
         {tournament && (
-          <div className="w-full max-w-lg border border-[#f5c542]/30 bg-[#f5c542]/5 rounded-2xl p-6 text-left">
-            <div className="flex items-center justify-between mb-4">
+          <div className="w-full max-w-lg rounded-2xl border border-[#f5c542]/30 bg-[#f5c542]/5 p-6 text-left">
+            <div className="mb-4 flex items-center justify-between">
               <div>
-                <div className="text-xs text-[#f5c542] font-bold uppercase tracking-widest mb-1">
+                <div className="mb-1 text-xs font-bold tracking-widest text-[#f5c542] uppercase">
                   Active Tournament
                 </div>
-                <h2 className="text-xl font-black text-white">{tournament.name}</h2>
+                <h2 className="text-xl font-black text-white">
+                  {tournament.name}
+                </h2>
               </div>
-              <span className="text-xs font-bold bg-green-500/20 text-green-400 px-3 py-1 rounded-full">
+              <span className="rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold text-green-400">
                 LIVE
               </span>
             </div>
 
-            <div className="grid grid-cols-3 gap-4 mb-6 text-center">
+            <div className="mb-6 grid grid-cols-3 gap-4 text-center">
               <div>
                 <div className="text-2xl font-black text-[#f5c542]">
                   {tournament.size}
@@ -75,7 +80,11 @@ export default function Home() {
               </div>
               <div>
                 <div className="text-2xl font-black text-white">
-                  {tournament.matches.filter((m) => !m.winnerId && m.round === tournament.currentRound).length}
+                  {
+                    tournament.matches.filter(
+                      (m) => !m.winnerId && m.round === tournament.currentRound,
+                    ).length
+                  }
                 </div>
                 <div className="text-xs text-white/40">Active Matches</div>
               </div>
@@ -83,7 +92,7 @@ export default function Home() {
 
             <Link
               href={`/bracket/${tournament.id}`}
-              className="block w-full text-center py-3 rounded-xl bg-[#f5c542] text-[#0a0a0a] font-black text-lg hover:bg-[#f5c542]/90 transition-colors"
+              className="block w-full rounded-xl bg-[#f5c542] py-3 text-center text-lg font-black text-[#0a0a0a] transition-colors hover:bg-[#f5c542]/90"
             >
               View Bracket & Vote
             </Link>
@@ -96,13 +105,13 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <p className="text-white/20 text-sm">
+        <p className="text-sm text-white/20">
           Powered by{" "}
           <a
             href="https://bags.fm"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#f5c542]/60 hover:text-[#f5c542] transition-colors"
+            className="text-[#f5c542]/60 transition-colors hover:text-[#f5c542]"
           >
             Bags.fm
           </a>

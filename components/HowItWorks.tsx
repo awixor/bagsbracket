@@ -19,19 +19,21 @@ const STEPS = [
 export default function HowItWorks() {
   return (
     <div className="w-full">
-      <h3 className="text-white/40 text-sm font-bold uppercase tracking-widest mb-6 text-center">
+      <h3 className="mb-6 text-center text-sm font-bold tracking-widest text-white/40 uppercase">
         How it works
       </h3>
-      <div className="grid sm:grid-cols-3 gap-4">
+      <div className="grid gap-4 sm:grid-cols-3">
         {STEPS.map(({ icon, title, body }, i) => (
           <div
             key={i}
-            className="border border-white/10 rounded-xl p-5 bg-white/5 flex flex-col gap-3"
+            className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/5 p-5"
           >
             <div className="text-3xl">{icon}</div>
             <div>
-              <div className="font-bold text-white mb-1">{title}</div>
-              <div className="text-white/40 text-sm leading-relaxed">{body}</div>
+              <div className="mb-1 font-bold text-white">{title}</div>
+              <div className="text-sm leading-relaxed text-white/40">
+                {body}
+              </div>
             </div>
           </div>
         ))}

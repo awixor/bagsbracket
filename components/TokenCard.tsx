@@ -33,14 +33,11 @@ export default function TokenCard({
 
   return (
     <div
-      className={`
-        flex flex-col gap-2 p-4 rounded-xl border transition-all
-        ${isWinner ? "border-[#f5c542] bg-[#f5c542]/10" : isLeading ? "border-[#f5c542]/50 bg-white/5" : "border-white/10 bg-white/5"}
-      `}
+      className={`flex flex-col gap-2 rounded-xl border p-4 transition-all ${isWinner ? "border-[#f5c542] bg-[#f5c542]/10" : isLeading ? "border-[#f5c542]/50 bg-white/5" : "border-white/10 bg-white/5"} `}
     >
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="relative w-10 h-10 rounded-full overflow-hidden bg-white/10 flex-shrink-0">
+        <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-white/10">
           {token.logo ? (
             <Image
               src={token.logo}
@@ -50,17 +47,17 @@ export default function TokenCard({
               unoptimized
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-sm font-bold text-[#f5c542]">
+            <div className="flex h-full w-full items-center justify-center text-sm font-bold text-[#f5c542]">
               {token.symbol.slice(0, 2)}
             </div>
           )}
         </div>
         <div className="min-w-0">
-          <div className="font-bold text-white truncate">{token.name}</div>
+          <div className="truncate font-bold text-white">{token.name}</div>
           <div className="text-xs text-white/50">${token.symbol}</div>
         </div>
         {isWinner && (
-          <span className="ml-auto text-xs font-bold text-[#f5c542] bg-[#f5c542]/20 px-2 py-0.5 rounded-full">
+          <span className="ml-auto rounded-full bg-[#f5c542]/20 px-2 py-0.5 text-xs font-bold text-[#f5c542]">
             WINNER
           </span>
         )}
@@ -68,25 +65,27 @@ export default function TokenCard({
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-2 text-sm">
-        <div className="bg-black/20 rounded-lg p-2">
-          <div className="text-white/40 text-xs">24h Volume</div>
-          <div className="text-white font-semibold">
+        <div className="rounded-lg bg-black/20 p-2">
+          <div className="text-xs text-white/40">24h Volume</div>
+          <div className="font-semibold text-white">
             {formatVolume(volumeInMatch ?? token.volume24h)}
           </div>
         </div>
-        <div className="bg-black/20 rounded-lg p-2">
-          <div className="text-white/40 text-xs">Price</div>
-          <div className="text-white font-semibold">{formatPrice(token.price)}</div>
+        <div className="rounded-lg bg-black/20 p-2">
+          <div className="text-xs text-white/40">Price</div>
+          <div className="font-semibold text-white">
+            {formatPrice(token.price)}
+          </div>
         </div>
-        <div className="bg-black/20 rounded-lg p-2">
-          <div className="text-white/40 text-xs">Holders</div>
-          <div className="text-white font-semibold">
+        <div className="rounded-lg bg-black/20 p-2">
+          <div className="text-xs text-white/40">Holders</div>
+          <div className="font-semibold text-white">
             {token.holders.toLocaleString()}
           </div>
         </div>
-        <div className="bg-black/20 rounded-lg p-2">
-          <div className="text-white/40 text-xs">Market Cap</div>
-          <div className="text-white font-semibold">
+        <div className="rounded-lg bg-black/20 p-2">
+          <div className="text-xs text-white/40">Market Cap</div>
+          <div className="font-semibold text-white">
             {formatVolume(token.marketCap)}
           </div>
         </div>
@@ -98,7 +97,7 @@ export default function TokenCard({
           href={tradeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-1 w-full text-center py-2 rounded-lg bg-[#f5c542] text-[#0a0a0a] font-bold text-sm hover:bg-[#f5c542]/90 transition-colors"
+          className="mt-1 w-full rounded-lg bg-[#f5c542] py-2 text-center text-sm font-bold text-[#0a0a0a] transition-colors hover:bg-[#f5c542]/90"
         >
           Trade to Support
         </a>

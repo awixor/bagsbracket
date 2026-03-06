@@ -49,8 +49,8 @@ export default function DemoPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="text-[#f5c542] text-lg animate-pulse">
+      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
+        <div className="animate-pulse text-lg text-[#f5c542]">
           Loading live demo...
         </div>
       </div>
@@ -59,8 +59,10 @@ export default function DemoPage() {
 
   if (error || !tournament) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center flex-col gap-4">
-        <div className="text-red-400 text-lg">{error ?? "Demo unavailable"}</div>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#0a0a0a]">
+        <div className="text-lg text-red-400">
+          {error ?? "Demo unavailable"}
+        </div>
         <Link href="/" className="text-[#f5c542] underline">
           Back to home
         </Link>
@@ -70,41 +72,48 @@ export default function DemoPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-[#f5c542] font-black text-xl tracking-tight">
+      <header className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+        <Link
+          href="/"
+          className="text-xl font-black tracking-tight text-[#f5c542]"
+        >
           BagsBracket
         </Link>
         <div className="flex items-center gap-4">
-          <Link href="/" className="text-white/50 text-sm hover:text-white transition-colors">
+          <Link
+            href="/"
+            className="text-sm text-white/50 transition-colors hover:text-white"
+          >
             Home
           </Link>
           <WalletButton />
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="mx-auto max-w-7xl px-4 py-8">
         {/* Live demo banner */}
-        <div className="mb-8 flex items-center gap-3 bg-green-500/10 border border-green-500/30 rounded-xl px-5 py-3">
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse shrink-0" />
-          <p className="text-green-400 text-sm font-medium">
-            This is a live demo — real Bags.fm tokens, real trading data from Dexscreener.
-            Seeded fresh on every page load.
+        <div className="mb-8 flex items-center gap-3 rounded-xl border border-green-500/30 bg-green-500/10 px-5 py-3">
+          <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-green-400" />
+          <p className="text-sm font-medium text-green-400">
+            This is a live demo — real Bags.fm tokens, real trading data from
+            Dexscreener. Seeded fresh on every page load.
           </p>
         </div>
 
         <div className="mb-6">
           <h1 className="text-2xl font-black text-white">{tournament.name}</h1>
-          <p className="text-white/40 text-sm mt-1">
-            Round {tournament.currentRound} · {tournament.size} tokens · Winner decided by 24h trading volume on Bags.fm
+          <p className="mt-1 text-sm text-white/40">
+            Round {tournament.currentRound} · {tournament.size} tokens · Winner
+            decided by 24h trading volume on Bags.fm
           </p>
         </div>
 
         {/* Bracket + Leaderboard */}
-        <div className="flex flex-col xl:flex-row gap-8">
-          <div className="flex-1 min-w-0">
+        <div className="flex flex-col gap-8 xl:flex-row">
+          <div className="min-w-0 flex-1">
             <Bracket tournament={tournament} onVote={handleVote} />
           </div>
-          <div className="xl:w-72 shrink-0">
+          <div className="shrink-0 xl:w-72">
             <Leaderboard tournament={tournament} />
           </div>
         </div>

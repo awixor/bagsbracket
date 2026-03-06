@@ -48,7 +48,7 @@ export default function Leaderboard({ tournament }: LeaderboardProps) {
 
   if (entries.length === 0) {
     return (
-      <div className="text-white/40 text-center py-8">
+      <div className="py-8 text-center text-white/40">
         No active matches in this round.
       </div>
     );
@@ -56,14 +56,14 @@ export default function Leaderboard({ tournament }: LeaderboardProps) {
 
   return (
     <div className="w-full">
-      <h2 className="text-lg font-bold text-white mb-4">
+      <h2 className="mb-4 text-lg font-bold text-white">
         Round {tournament.currentRound} Standings
       </h2>
       <div className="flex flex-col gap-2">
         {entries.map((entry, idx) => (
           <div
             key={entry.token.mint}
-            className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
+            className={`flex items-center gap-3 rounded-xl border p-3 transition-all ${
               entry.won
                 ? "border-[#f5c542]/50 bg-[#f5c542]/10"
                 : "border-white/10 bg-white/5"
@@ -71,7 +71,7 @@ export default function Leaderboard({ tournament }: LeaderboardProps) {
           >
             {/* Rank */}
             <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0 ${
+              className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-sm font-black ${
                 idx === 0
                   ? "bg-[#f5c542] text-[#0a0a0a]"
                   : "bg-white/10 text-white/50"
@@ -81,7 +81,7 @@ export default function Leaderboard({ tournament }: LeaderboardProps) {
             </div>
 
             {/* Logo */}
-            <div className="relative w-8 h-8 rounded-full overflow-hidden bg-white/10 flex-shrink-0">
+            <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-white/10">
               {entry.token.logo ? (
                 <Image
                   src={entry.token.logo}
@@ -91,15 +91,15 @@ export default function Leaderboard({ tournament }: LeaderboardProps) {
                   unoptimized
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-xs font-bold text-[#f5c542]">
+                <div className="flex h-full w-full items-center justify-center text-xs font-bold text-[#f5c542]">
                   {entry.token.symbol.slice(0, 2)}
                 </div>
               )}
             </div>
 
             {/* Name */}
-            <div className="flex-1 min-w-0">
-              <div className="font-semibold text-white text-sm truncate">
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-sm font-semibold text-white">
                 {entry.token.name}
               </div>
               <div className="text-xs text-white/40">${entry.token.symbol}</div>
@@ -107,7 +107,7 @@ export default function Leaderboard({ tournament }: LeaderboardProps) {
 
             {/* Volume */}
             <div className="text-right">
-              <div className="font-bold text-[#f5c542] text-sm">
+              <div className="text-sm font-bold text-[#f5c542]">
                 {formatVolume(entry.volume)}
               </div>
               <div className="text-xs text-white/40">volume</div>
@@ -115,7 +115,7 @@ export default function Leaderboard({ tournament }: LeaderboardProps) {
 
             {/* Winner badge */}
             {entry.won && (
-              <span className="text-xs font-bold text-[#f5c542] bg-[#f5c542]/20 px-2 py-0.5 rounded-full flex-shrink-0">
+              <span className="flex-shrink-0 rounded-full bg-[#f5c542]/20 px-2 py-0.5 text-xs font-bold text-[#f5c542]">
                 W
               </span>
             )}

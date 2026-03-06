@@ -56,10 +56,9 @@ export async function getTokens(mints: string[]): Promise<Token[]> {
 
   // Dexscreener accepts comma-separated addresses (max 30)
   const joined = mints.slice(0, 30).join(",");
-  const res = await fetch(
-    `${DEXSCREENER_API}/tokens/v1/solana/${joined}`,
-    { next: { revalidate: 60 } },
-  );
+  const res = await fetch(`${DEXSCREENER_API}/tokens/v1/solana/${joined}`, {
+    next: { revalidate: 60 },
+  });
   if (!res.ok) throw new Error("Dexscreener: failed to fetch tokens");
 
   const pairs: DexPair[] = await res.json();
@@ -144,10 +143,10 @@ export interface BagsPool {
  */
 export async function getBagsPool(mint: string): Promise<BagsPool | null> {
   if (!BAGS_API_KEY) return null;
-  const res = await fetch(
-    `${BAGS_API}/bags-pool-by-token-mint/${mint}`,
-    { headers: bagsHeaders(), next: { revalidate: 300 } },
-  );
+  const res = await fetch(`${BAGS_API}/bags-pool-by-token-mint/${mint}`, {
+    headers: bagsHeaders(),
+    next: { revalidate: 300 },
+  });
   if (!res.ok) return null;
   return res.json();
 }
@@ -179,7 +178,7 @@ export async function getTokenLifetimeFees(
 
 export interface TokenClaimEvent {
   timestamp: string; // ISO date
-  amount: number;    // fees claimed in this event
+  amount: number; // fees claimed in this event
 }
 
 /**

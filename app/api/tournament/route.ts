@@ -18,7 +18,10 @@ export async function POST(request: Request) {
   };
 
   if (!matchId || !tokenMint || !walletAddress) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing required fields" },
+      { status: 400 },
+    );
   }
 
   const match = tournamentState.matches.find((m) => m.id === matchId);
@@ -26,10 +29,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Match not found" }, { status: 404 });
   }
   if (match.winnerId) {
-    return NextResponse.json({ error: "Match already resolved" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Match already resolved" },
+      { status: 400 },
+    );
   }
   if (tokenMint !== match.tokenA.mint && tokenMint !== match.tokenB.mint) {
-    return NextResponse.json({ error: "Invalid token for this match" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid token for this match" },
+      { status: 400 },
+    );
   }
 
   // Record vote
