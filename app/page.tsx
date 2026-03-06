@@ -1,5 +1,6 @@
 import Link from "next/link";
 import WalletButton from "@/components/WalletButton";
+import HowItWorks from "@/components/HowItWorks";
 import { SEED_TOURNAMENT } from "@/data/seed";
 
 export default function Home() {
@@ -12,7 +13,12 @@ export default function Home() {
         <span className="text-[#f5c542] font-black text-xl tracking-tight">
           BagsBracket
         </span>
-        <WalletButton />
+        <div className="flex items-center gap-4">
+          <Link href="/demo" className="text-white/50 text-sm hover:text-white transition-colors">
+            Demo
+          </Link>
+          <WalletButton />
+        </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-16 flex flex-col items-center text-center gap-10">
@@ -31,6 +37,12 @@ export default function Home() {
             by real trading volume on Bags.fm — vote, trade, and campaign for
             your favourite token.
           </p>
+          <Link
+            href="/demo"
+            className="inline-block px-8 py-4 rounded-2xl bg-[#f5c542] text-[#0a0a0a] font-black text-lg hover:bg-[#f5c542]/90 transition-colors"
+          >
+            View Live Demo →
+          </Link>
         </div>
 
         {/* Active tournament card */}
@@ -80,37 +92,7 @@ export default function Home() {
 
         {/* How it works */}
         <div className="w-full max-w-2xl">
-          <h3 className="text-white/40 text-sm font-bold uppercase tracking-widest mb-6">
-            How it works
-          </h3>
-          <div className="grid sm:grid-cols-3 gap-4 text-left">
-            {[
-              {
-                step: "01",
-                title: "8 Tokens Enter",
-                desc: "Seeded by holder count — best vs worst in each matchup.",
-              },
-              {
-                step: "02",
-                title: "Trade to Win",
-                desc: "Higher 24h trading volume on Bags.fm wins the match. Campaign hard.",
-              },
-              {
-                step: "03",
-                title: "Community Votes",
-                desc: "Connect wallet to cast votes. Volume wins ties.",
-              },
-            ].map(({ step, title, desc }) => (
-              <div
-                key={step}
-                className="border border-white/10 rounded-xl p-4 bg-white/5"
-              >
-                <div className="text-[#f5c542] font-black text-2xl mb-2">{step}</div>
-                <div className="font-bold text-white mb-1">{title}</div>
-                <div className="text-white/40 text-sm">{desc}</div>
-              </div>
-            ))}
-          </div>
+          <HowItWorks />
         </div>
 
         {/* Footer */}
