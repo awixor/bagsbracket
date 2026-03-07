@@ -15,32 +15,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verify token exists on Bags.fm by checking the pool endpoint
-    const bagsRes = await fetch(
-      `https://public-api-v2.bags.fm/api/v1/bags-pool-by-token-mint/${mint}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          ...(process.env.BAGS_API_KEY
-            ? { "x-api-key": process.env.BAGS_API_KEY }
-            : {}),
-        },
-      },
-    );
-
-    if (!bagsRes.ok) {
+    // All Bags.fm tokens have mints ending in "BAGS"
+    if (!mint.endsWith("BAGS")) {
       return NextResponse.json(
         {
           error:
-            "Token not found on Bags.fm. Make sure this is a valid Bags.fm token.",
+            "Not a Bags.fm token. Bags.fm token mints end in 'BAGS'.",
+        },
+        { status: 400 },
+      );
+    }
+
+    // Fetch token metadata from Dexscreener — also acts as existence check
+    const tokens = await getTokens([mint]).catch(() => []);
+    const token = tokens[0];
+
+    if (!token) {
+      return NextResponse.json(
+        {
+          error:
+            "Token not found. Make sure this is a valid Bags.fm token mint address.",
         },
         { status: 404 },
       );
     }
-
-    // Fetch token metadata from Dexscreener for name/symbol/logo/holders
-    const tokens = await getTokens([mint]).catch(() => []);
-    const token = tokens[0];
 
     const registration: TokenRegistration = {
       id: uuid(),

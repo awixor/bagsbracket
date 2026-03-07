@@ -88,6 +88,11 @@ export default function AdminPage() {
   const [registrations, setRegistrations] = useState<TokenRegistration[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [launching, setLaunching] = useState(false);
+  const [launchResult, setLaunchResult] = useState<{
+    ok: boolean;
+    message: string;
+  } | null>(null);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -108,6 +113,23 @@ export default function AdminPage() {
     setRegistrations(data.registrations ?? []);
     setAuthed(true);
     setLoading(false);
+  }
+
+  async function handleLaunch() {
+    setLaunching(true);
+    setLaunchResult(null);
+    const res = await fetch("/api/admin/launch", {
+      method: "POST",
+      headers: { "x-admin-secret": secret },
+    });
+    const data = await res.json();
+    setLaunchResult({
+      ok: res.ok,
+      message: res.ok
+        ? `Tournament launched! ID: ${data.tournamentId}`
+        : data.error ?? "Launch failed.",
+    });
+    setLaunching(false);
   }
 
   async function handleReview(id: string, status: "approved" | "rejected") {
@@ -173,9 +195,19 @@ export default function AdminPage() {
       <main className="mx-auto max-w-3xl px-4 py-8">
         {/* Queue counter */}
         <div className="mb-8 rounded-xl border border-[#f5c542]/30 bg-[#f5c542]/5 px-5 py-4">
-          <div className="text-sm font-bold text-[#f5c542]">
-            {approved.length} / {TOURNAMENT_SIZE} approved tokens — tournament
-            starts at {TOURNAMENT_SIZE}
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-bold text-[#f5c542]">
+              {approved.length} / {TOURNAMENT_SIZE} approved tokens
+            </div>
+            {approved.length >= TOURNAMENT_SIZE && (
+              <button
+                onClick={handleLaunch}
+                disabled={launching}
+                className="cursor-pointer rounded-lg bg-[#f5c542] px-4 py-1.5 text-sm font-bold text-[#0a0a0a] transition-colors hover:bg-[#f5c542]/90 disabled:opacity-50"
+              >
+                {launching ? "Launching..." : "Launch Tournament"}
+              </button>
+            )}
           </div>
           <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
             <div
@@ -185,6 +217,13 @@ export default function AdminPage() {
               }}
             />
           </div>
+          {launchResult && (
+            <p
+              className={`mt-2 text-sm font-medium ${launchResult.ok ? "text-green-400" : "text-red-400"}`}
+            >
+              {launchResult.message}
+            </p>
+          )}
         </div>
 
         {/* Pending */}

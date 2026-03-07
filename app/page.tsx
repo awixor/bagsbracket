@@ -2,10 +2,10 @@ import Link from "next/link";
 import WalletButton from "@/components/WalletButton";
 import HowItWorks from "@/components/HowItWorks";
 import QueueStatus from "@/components/QueueStatus";
-import { SEED_TOURNAMENT } from "@/data/seed";
+import { getActiveTournament } from "@/lib/kv";
 
-export default function Home() {
-  const tournament = SEED_TOURNAMENT;
+export default async function Home() {
+  const tournament = await getActiveTournament().catch(() => null);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">

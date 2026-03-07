@@ -1,5 +1,5 @@
 import { kv } from "@vercel/kv";
-import type { TokenRegistration } from "@/types";
+import type { TokenRegistration, Tournament } from "@/types";
 
 const QUEUE_KEY = "registration_queue";
 
@@ -37,4 +37,39 @@ export async function updateRegistrationStatus(
 export async function getApprovedCount(): Promise<number> {
   const approved = await getRegistrationsByStatus("approved");
   return approved.filter((r) => !r.tournamentId).length;
+}
+
+// ---------------------------------------------------------------------------
+// Tournament persistence
+// ---------------------------------------------------------------------------
+
+const TOURNAMENT_KEY = "active_tournament";
+
+export async function getActiveTournament(): Promise<Tournament | null> {
+  return kv.get<Tournament>(TOURNAMENT_KEY);
+}
+
+export async function saveTournament(tournament: Tournament): Promise<void> {
+  await kv.set(TOURNAMENT_KEY, tournament);
+}
+
+export async function updateTournament(
+  updater: (t: Tournament) => Tournament,
+): Promise<Tournament | null> {
+  const current = await getActiveTournament();
+  if (!current) return null;
+  const updated = updater(current);
+  await kv.set(TOURNAMENT_KEY, updated);
+  return updated;
+}
+
+export async function markRegistrationsLaunched(
+  ids: string[],
+  tournamentId: string,
+): Promise<void> {
+  const all = await getAllRegistrations();
+  const updated = all.map((r) =>
+    ids.includes(r.id) ? { ...r, tournamentId } : r,
+  );
+  await kv.set(QUEUE_KEY, updated);
 }

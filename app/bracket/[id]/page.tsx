@@ -147,14 +147,10 @@ export default function BracketPage() {
           )}
         </div>
 
-        {/* Main layout: bracket + leaderboard */}
-        <div className="flex flex-col gap-8 xl:flex-row">
-          <div className="min-w-0 flex-1">
-            <Bracket tournament={tournament} onVote={handleVote} />
-          </div>
-          <div className="shrink-0 xl:w-72">
-            <Leaderboard tournament={tournament} />
-          </div>
+        <Bracket tournament={tournament} onVote={handleVote} />
+
+        <div className="mt-10">
+          <Leaderboard tournament={tournament} />
         </div>
       </main>
     </div>

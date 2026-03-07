@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
+import { getActiveTournament, saveTournament } from "@/lib/kv";
 import { SEED_TOURNAMENT } from "@/data/seed";
-import type { Tournament } from "@/types";
-
-// In-memory store for MVP (replace with Vercel KV for production persistence)
-let tournamentState: Tournament = SEED_TOURNAMENT;
 
 export async function GET() {
-  return NextResponse.json(tournamentState);
+  const tournament = await getActiveTournament().catch(() => null);
+  return NextResponse.json(tournament ?? SEED_TOURNAMENT);
 }
 
 export async function POST(request: Request) {
@@ -24,7 +22,10 @@ export async function POST(request: Request) {
     );
   }
 
-  const match = tournamentState.matches.find((m) => m.id === matchId);
+  const tournament = await getActiveTournament().catch(() => null);
+  const state = tournament ?? SEED_TOURNAMENT;
+
+  const match = state.matches.find((m) => m.id === matchId);
   if (!match) {
     return NextResponse.json({ error: "Match not found" }, { status: 404 });
   }
@@ -41,10 +42,9 @@ export async function POST(request: Request) {
     );
   }
 
-  // Record vote
-  tournamentState = {
-    ...tournamentState,
-    matches: tournamentState.matches.map((m) => {
+  const updated = {
+    ...state,
+    matches: state.matches.map((m) => {
       if (m.id !== matchId) return m;
       return {
         ...m,
@@ -54,5 +54,6 @@ export async function POST(request: Request) {
     }),
   };
 
+  if (tournament) await saveTournament(updated);
   return NextResponse.json({ success: true });
 }
