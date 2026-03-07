@@ -93,6 +93,11 @@ export default function AdminPage() {
     ok: boolean;
     message: string;
   } | null>(null);
+  const [resolving, setResolving] = useState(false);
+  const [resolveResult, setResolveResult] = useState<{
+    ok: boolean;
+    message: string;
+  } | null>(null);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -127,9 +132,28 @@ export default function AdminPage() {
       ok: res.ok,
       message: res.ok
         ? `Tournament launched! ID: ${data.tournamentId}`
-        : data.error ?? "Launch failed.",
+        : (data.error ?? "Launch failed."),
     });
     setLaunching(false);
+  }
+
+  async function handleResolve() {
+    setResolving(true);
+    setResolveResult(null);
+    const res = await fetch("/api/admin/resolve", {
+      method: "POST",
+      headers: { "x-admin-secret": secret },
+    });
+    const data = await res.json();
+    setResolveResult({
+      ok: res.ok,
+      message: res.ok
+        ? data.status === "completed"
+          ? "Tournament completed! 🏆"
+          : `Round resolved. Advanced to Round ${data.nextRound}.`
+        : (data.error ?? "Resolve failed."),
+    });
+    setResolving(false);
   }
 
   async function handleReview(id: string, status: "approved" | "rejected") {
@@ -223,6 +247,32 @@ export default function AdminPage() {
               className={`mt-2 text-sm font-medium ${launchResult.ok ? "text-green-400" : "text-red-400"}`}
             >
               {launchResult.message}
+            </p>
+          )}
+        </div>
+
+        {/* Resolve round */}
+        <div className="mb-8 rounded-xl border border-white/10 bg-white/5 px-5 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm font-bold text-white">Resolve Current Round</div>
+              <div className="mt-0.5 text-xs text-white/40">
+                Picks winners for all unresolved matches and advances to the next round.
+              </div>
+            </div>
+            <button
+              onClick={handleResolve}
+              disabled={resolving}
+              className="cursor-pointer rounded-lg border border-white/20 px-4 py-1.5 text-sm font-bold text-white transition-colors hover:border-[#f5c542]/50 hover:text-[#f5c542] disabled:opacity-50"
+            >
+              {resolving ? "Resolving..." : "Resolve Round"}
+            </button>
+          </div>
+          {resolveResult && (
+            <p
+              className={`mt-2 text-sm font-medium ${resolveResult.ok ? "text-green-400" : "text-red-400"}`}
+            >
+              {resolveResult.message}
             </p>
           )}
         </div>

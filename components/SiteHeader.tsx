@@ -12,16 +12,16 @@ export default function SiteHeader() {
       </Link>
       <div className="flex items-center gap-4">
         <Link
-          href="/demo"
-          className="text-sm text-white/50 transition-colors hover:text-white"
-        >
-          Demo
-        </Link>
-        <Link
           href="/register"
           className="text-sm text-white/50 transition-colors hover:text-white"
         >
           Register
+        </Link>
+        <Link
+          href="/demo"
+          className="rounded-lg bg-[#f5c542] px-3 py-1.5 text-sm font-bold text-[#0a0a0a] transition-colors hover:bg-[#f5c542]/90"
+        >
+          Live Demo
         </Link>
         <WalletButton />
       </div>

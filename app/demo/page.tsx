@@ -8,6 +8,7 @@ import Leaderboard from "@/components/Leaderboard";
 import HowItWorks from "@/components/HowItWorks";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
+import Spinner from "@/components/Spinner";
 
 export default function DemoPage() {
   const [tournament, setTournament] = useState<Tournament | null>(null);
@@ -47,15 +48,7 @@ export default function DemoPage() {
     alert(`Vote recorded for ${tokenMint.slice(0, 8)}... (demo mode)`);
   }
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
-        <div className="animate-pulse text-lg text-[#f5c542]">
-          Loading live demo...
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <Spinner />;
 
   if (error || !tournament) {
     return (

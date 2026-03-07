@@ -3,6 +3,7 @@ import HowItWorks from "@/components/HowItWorks";
 import QueueStatus from "@/components/QueueStatus";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import WinnerBanner from "@/components/WinnerBanner";
 import { getActiveTournament } from "@/lib/kv";
 
 export default async function Home() {
@@ -12,9 +13,9 @@ export default async function Home() {
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <SiteHeader />
 
-      <main className="mx-auto flex max-w-5xl flex-col items-center gap-10 px-4 py-16 text-center">
+      <main className="mx-auto flex max-w-5xl flex-col items-center gap-16 px-4 py-16 text-center">
         {/* Hero */}
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-6">
           <div className="inline-block rounded-full border border-[#f5c542]/30 bg-[#f5c542]/10 px-4 py-1.5 text-xs font-bold tracking-widest text-[#f5c542] uppercase">
             Built on Bags.fm · Solana
           </div>
@@ -28,19 +29,33 @@ export default async function Home() {
             by real trading volume on Bags.fm — vote, trade, and campaign for
             your favourite token.
           </p>
-          <Link
-            href="/demo"
-            className="inline-block rounded-2xl bg-[#f5c542] px-8 py-4 text-lg font-black text-[#0a0a0a] transition-colors hover:bg-[#f5c542]/90"
-          >
-            View Live Demo →
-          </Link>
+
+          {/* CTAs */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/register"
+              className="rounded-2xl bg-[#f5c542] px-8 py-4 text-lg font-black text-[#0a0a0a] transition-colors hover:bg-[#f5c542]/90"
+            >
+              Register Your Token →
+            </Link>
+            {tournament?.status === "active" && (
+              <Link
+                href={`/bracket/${tournament.id}`}
+                className="rounded-2xl border border-white/20 px-8 py-4 text-lg font-black text-white transition-colors hover:border-[#f5c542]/50 hover:text-[#f5c542]"
+              >
+                View Live Bracket
+              </Link>
+            )}
+          </div>
         </div>
 
-        {/* Next tournament queue */}
-        <QueueStatus />
+        {/* Winner spotlight */}
+        {tournament?.status === "completed" && (
+          <WinnerBanner tournament={tournament} />
+        )}
 
-        {/* Active tournament card */}
-        {tournament && (
+        {/* Active tournament banner */}
+        {tournament?.status === "active" && (
           <div className="w-full max-w-lg rounded-2xl border border-[#f5c542]/30 bg-[#f5c542]/5 p-6 text-left">
             <div className="mb-4 flex items-center justify-between">
               <div>
@@ -51,7 +66,8 @@ export default async function Home() {
                   {tournament.name}
                 </h2>
               </div>
-              <span className="rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold text-green-400">
+              <span className="flex items-center gap-1.5 rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold text-green-400">
+                <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
                 LIVE
               </span>
             </div>
@@ -89,6 +105,9 @@ export default async function Home() {
             </Link>
           </div>
         )}
+
+        {/* Queue status */}
+        <QueueStatus />
 
         {/* How it works */}
         <div className="w-full max-w-2xl">

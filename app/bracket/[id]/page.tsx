@@ -6,6 +6,7 @@ import type { Tournament } from "@/types";
 import Bracket from "@/components/Bracket";
 import Leaderboard from "@/components/Leaderboard";
 import SiteHeader from "@/components/SiteHeader";
+import Spinner from "@/components/Spinner";
 import Link from "next/link";
 
 const POLL_INTERVAL_MS = 60_000;
@@ -70,15 +71,7 @@ export default function BracketPage() {
     await fetchTournament();
   }
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a]">
-        <div className="animate-pulse text-lg text-[#f5c542]">
-          Loading bracket...
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <Spinner />;
 
   if (error || !tournament) {
     return (
