@@ -7,6 +7,7 @@ import Bracket from "@/components/Bracket";
 import Leaderboard from "@/components/Leaderboard";
 import WalletButton from "@/components/WalletButton";
 import Link from "next/link";
+import Image from "next/image";
 
 const POLL_INTERVAL_MS = 60_000;
 
@@ -96,11 +97,8 @@ export default function BracketPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <header className="flex items-center justify-between border-b border-white/10 px-6 py-4">
-        <Link
-          href="/"
-          className="text-xl font-black tracking-tight text-[#f5c542]"
-        >
-          BagsBracket
+        <Link href="/">
+          <Image src="/logo.png" alt="BagsBracket" width={40} height={40} />
         </Link>
         <div className="flex items-center gap-4">
           <Link

@@ -187,9 +187,10 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <header className="flex items-center justify-between border-b border-white/10 px-6 py-4">
-        <span className="text-xl font-black tracking-tight text-[#f5c542]">
-          BagsBracket Admin
-        </span>
+        <div className="flex items-center gap-2">
+          <Image src="/logo.png" alt="BagsBracket" width={36} height={36} />
+          <span className="text-sm font-bold text-white/40">Admin</span>
+        </div>
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-8">
