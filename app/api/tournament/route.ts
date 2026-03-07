@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getActiveTournament, saveTournament } from "@/lib/kv";
+import { getActiveTournament, saveTournament, hasVoted, recordVote } from "@/lib/kv";
 import { SEED_TOURNAMENT } from "@/data/seed";
 
 export async function GET() {
@@ -42,6 +42,13 @@ export async function POST(request: Request) {
     );
   }
 
+  if (tournament && (await hasVoted(matchId, walletAddress))) {
+    return NextResponse.json(
+      { error: "You already voted in this match" },
+      { status: 409 },
+    );
+  }
+
   const updated = {
     ...state,
     matches: state.matches.map((m) => {
@@ -54,6 +61,9 @@ export async function POST(request: Request) {
     }),
   };
 
-  if (tournament) await saveTournament(updated);
+  if (tournament) {
+    await saveTournament(updated);
+    await recordVote(matchId, walletAddress);
+  }
   return NextResponse.json({ success: true });
 }

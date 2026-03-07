@@ -63,6 +63,26 @@ export async function updateTournament(
   return updated;
 }
 
+// ---------------------------------------------------------------------------
+// Vote deduplication
+// ---------------------------------------------------------------------------
+
+export async function hasVoted(
+  matchId: string,
+  walletAddress: string,
+): Promise<boolean> {
+  const key = `match_votes:${matchId}`;
+  return (await kv.sismember(key, walletAddress)) === 1;
+}
+
+export async function recordVote(
+  matchId: string,
+  walletAddress: string,
+): Promise<void> {
+  const key = `match_votes:${matchId}`;
+  await kv.sadd(key, walletAddress);
+}
+
 export async function markRegistrationsLaunched(
   ids: string[],
   tournamentId: string,

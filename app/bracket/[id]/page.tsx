@@ -52,8 +52,7 @@ export default function BracketPage() {
 
   async function handleVote(matchId: string, tokenMint: string) {
     if (!publicKey) {
-      alert("Connect your wallet to vote.");
-      return;
+      throw new Error("Connect your wallet to vote.");
     }
     const res = await fetch("/api/tournament", {
       method: "POST",
@@ -66,8 +65,7 @@ export default function BracketPage() {
     });
     if (!res.ok) {
       const data = await res.json();
-      alert(data.error ?? "Vote failed");
-      return;
+      throw new Error(data.error ?? "Vote failed");
     }
     await fetchTournament();
   }

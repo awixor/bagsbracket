@@ -57,13 +57,17 @@ function TokenSide({
   side: "A" | "B";
 }) {
   const [voting, setVoting] = useState(false);
+  const [voteError, setVoteError] = useState<string | null>(null);
   const tradeUrl = `https://bags.fm/${token.mint}`;
 
   async function handleVote() {
     if (!onVote) return;
     setVoting(true);
+    setVoteError(null);
     try {
       await onVote(matchId, token.mint);
+    } catch (e) {
+      setVoteError(e instanceof Error ? e.message : "Vote failed");
     } finally {
       setVoting(false);
     }
@@ -127,13 +131,18 @@ function TokenSide({
             Trade
           </a>
           {onVote && (
-            <button
-              onClick={handleVote}
-              disabled={voting}
-              className="cursor-pointer rounded-lg border border-white/20 py-1.5 text-xs font-medium text-white/70 transition-colors hover:border-[#f5c542]/50 hover:text-[#f5c542] disabled:opacity-50"
-            >
-              {voting ? "Voting..." : "Vote"}
-            </button>
+            <>
+              <button
+                onClick={handleVote}
+                disabled={voting}
+                className="cursor-pointer rounded-lg border border-white/20 py-1.5 text-xs font-medium text-white/70 transition-colors hover:border-[#f5c542]/50 hover:text-[#f5c542] disabled:opacity-50"
+              >
+                {voting ? "Voting..." : "Vote"}
+              </button>
+              {voteError && (
+                <p className="text-center text-xs text-red-400">{voteError}</p>
+              )}
+            </>
           )}
         </div>
       )}
