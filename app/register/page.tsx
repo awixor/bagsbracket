@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import WalletButton from "@/components/WalletButton";
+import SiteHeader from "@/components/SiteHeader";
 
 type TokenPreview = {
   name: string;
@@ -83,20 +82,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <header className="flex items-center justify-between border-b border-white/10 px-6 py-4">
-        <Link href="/">
-          <Image src="/logo.png" alt="BagsBracket" width={40} height={40} />
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link
-            href="/demo"
-            className="text-sm text-white/50 transition-colors hover:text-white"
-          >
-            Demo
-          </Link>
-          <WalletButton />
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="mx-auto flex max-w-lg flex-col items-center px-4 py-16">
         <div className="w-full rounded-2xl border border-white/10 bg-white/5 p-8">

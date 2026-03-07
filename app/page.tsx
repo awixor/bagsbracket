@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
-import WalletButton from "@/components/WalletButton";
 import HowItWorks from "@/components/HowItWorks";
 import QueueStatus from "@/components/QueueStatus";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 import { getActiveTournament } from "@/lib/kv";
 
 export default async function Home() {
@@ -10,25 +10,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      {/* Nav */}
-      <header className="flex items-center justify-between border-b border-white/10 px-6 py-4">
-        <Image src="/logo.png" alt="BagsBracket" width={40} height={40} />
-        <div className="flex items-center gap-4">
-          <Link
-            href="/demo"
-            className="text-sm text-white/50 transition-colors hover:text-white"
-          >
-            Demo
-          </Link>
-          <Link
-            href="/register"
-            className="text-sm text-white/50 transition-colors hover:text-white"
-          >
-            Register
-          </Link>
-          <WalletButton />
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="mx-auto flex max-w-5xl flex-col items-center gap-10 px-4 py-16 text-center">
         {/* Hero */}
@@ -113,18 +95,7 @@ export default async function Home() {
           <HowItWorks />
         </div>
 
-        {/* Footer */}
-        <p className="text-sm text-white/20">
-          Powered by{" "}
-          <a
-            href="https://bags.fm"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[#f5c542]/60 transition-colors hover:text-[#f5c542]"
-          >
-            Bags.fm
-          </a>
-        </p>
+        <SiteFooter />
       </main>
     </div>
   );

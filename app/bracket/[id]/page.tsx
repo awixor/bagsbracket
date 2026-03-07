@@ -5,9 +5,8 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import type { Tournament } from "@/types";
 import Bracket from "@/components/Bracket";
 import Leaderboard from "@/components/Leaderboard";
-import WalletButton from "@/components/WalletButton";
+import SiteHeader from "@/components/SiteHeader";
 import Link from "next/link";
-import Image from "next/image";
 
 const POLL_INTERVAL_MS = 60_000;
 
@@ -96,26 +95,7 @@ export default function BracketPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <header className="flex items-center justify-between border-b border-white/10 px-6 py-4">
-        <Link href="/">
-          <Image src="/logo.png" alt="BagsBracket" width={40} height={40} />
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link
-            href="/demo"
-            className="text-sm text-white/50 transition-colors hover:text-white"
-          >
-            Demo
-          </Link>
-          <Link
-            href="/register"
-            className="text-sm text-white/50 transition-colors hover:text-white"
-          >
-            Register
-          </Link>
-          <WalletButton />
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="mx-auto max-w-7xl px-4 py-8">
         <div className="mb-8">
