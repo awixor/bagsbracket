@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getActiveTournament, saveTournament } from "@/lib/kv";
+import { getActiveTournament, saveTournament, archiveTournament } from "@/lib/kv";
 import { resolveMatch, advanceRound, getTotalRounds } from "@/lib/tournament";
 
 function isAuthorized(req: NextRequest) {
@@ -46,8 +46,9 @@ export async function POST(req: NextRequest) {
   const isFinalRound = tournament.currentRound === totalRounds;
 
   if (isFinalRound) {
-    // Tournament complete
-    await saveTournament({ ...updatedTournament, status: "completed" });
+    const completed = { ...updatedTournament, status: "completed" as const };
+    await saveTournament(completed);
+    await archiveTournament(completed);
     return NextResponse.json({ status: "completed" });
   }
 

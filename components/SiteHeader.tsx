@@ -12,6 +12,12 @@ export default function SiteHeader() {
       </Link>
       <div className="flex items-center gap-4">
         <Link
+          href="/tournaments"
+          className="text-sm text-white/50 transition-colors hover:text-white"
+        >
+          Tournaments
+        </Link>
+        <Link
           href="/register"
           className="text-sm text-white/50 transition-colors hover:text-white"
         >

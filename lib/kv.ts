@@ -64,6 +64,23 @@ export async function updateTournament(
 }
 
 // ---------------------------------------------------------------------------
+// Tournament archive
+// ---------------------------------------------------------------------------
+
+const ARCHIVE_KEY = "tournaments_archive";
+
+export async function getArchivedTournaments(): Promise<Tournament[]> {
+  const data = await kv.get<Tournament[]>(ARCHIVE_KEY);
+  return data ?? [];
+}
+
+export async function archiveTournament(tournament: Tournament): Promise<void> {
+  const archive = await getArchivedTournaments();
+  if (archive.find((t) => t.id === tournament.id)) return; // already archived
+  await kv.set(ARCHIVE_KEY, [tournament, ...archive]);
+}
+
+// ---------------------------------------------------------------------------
 // Vote deduplication
 // ---------------------------------------------------------------------------
 
