@@ -70,7 +70,6 @@ function TokenSide({
   isActive,
   onVote,
   matchId,
-  side,
 }: {
   token: Match["tokenA"];
   volume: number;
@@ -80,7 +79,6 @@ function TokenSide({
   isActive: boolean;
   onVote?: (matchId: string, mint: string) => Promise<void>;
   matchId: string;
-  side: "A" | "B";
 }) {
   const [voting, setVoting] = useState(false);
   const [voteError, setVoteError] = useState<string | null>(null);
@@ -103,53 +101,58 @@ function TokenSide({
     <div
       className={`flex flex-1 flex-col items-center gap-2 rounded-xl p-4 transition-all ${isWinner ? "border border-[#f5c542] bg-[#f5c542]/15" : "border border-white/10 bg-white/5"} `}
     >
-      {/* Logo */}
-      <div className="relative h-14 w-14 overflow-hidden rounded-full bg-white/10">
-        {token.logo ? (
-          <Image
-            src={token.logo}
-            alt={token.name}
-            fill
-            className="object-cover"
-            unoptimized
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-lg font-bold text-[#f5c542]">
-            {token.symbol.slice(0, 2)}
+      {/* Top content */}
+      <div className="flex flex-1 flex-col items-center gap-2">
+        {/* Logo */}
+        <div className="relative h-14 w-14 overflow-hidden rounded-full bg-white/10">
+          {token.logo ? (
+            <Image
+              src={token.logo}
+              alt={token.name}
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-lg font-bold text-[#f5c542]">
+              {token.symbol.slice(0, 2)}
+            </div>
+          )}
+        </div>
+
+        {/* Name + Symbol */}
+        <div className="text-center">
+          <div className="text-sm leading-tight font-bold text-white">
+            {token.name}
           </div>
+          <div className="text-xs text-white/40">${token.symbol}</div>
+        </div>
+      </div>
+
+      <div className="align-center flex w-full flex-col justify-center gap-1">
+        {/* Volume / Growth */}
+        <div className="text-center">
+          <div className="text-lg font-bold text-[#f5c542]">
+            {formatGrowth(volume, baseline)}
+          </div>
+          <div className="text-xs text-white/40">
+            {baseline > 0 ? "growth" : "volume"}
+          </div>
+        </div>
+
+        {/* Votes */}
+        <div className="text-center text-xs text-white/60">{votes} votes</div>
+
+        {isWinner && (
+          <span className="rounded-full bg-[#f5c542]/20 px-2 py-0.5 text-xs font-bold text-[#f5c542]">
+            WINNER
+          </span>
         )}
       </div>
 
-      {/* Name + Symbol */}
-      <div className="text-center">
-        <div className="text-sm leading-tight font-bold text-white">
-          {token.name}
-        </div>
-        <div className="text-xs text-white/40">${token.symbol}</div>
-      </div>
-
-      {/* Volume / Growth */}
-      <div className="text-center">
-        <div className="text-lg font-bold text-[#f5c542]">
-          {formatGrowth(volume, baseline)}
-        </div>
-        <div className="text-xs text-white/40">
-          {baseline > 0 ? "growth" : "volume"}
-        </div>
-      </div>
-
-      {/* Votes */}
-      <div className="text-xs text-white/60">{votes} votes</div>
-
-      {isWinner && (
-        <span className="rounded-full bg-[#f5c542]/20 px-2 py-0.5 text-xs font-bold text-[#f5c542]">
-          WINNER
-        </span>
-      )}
-
-      {/* Actions */}
+      {/* Actions — pinned to bottom */}
       {isActive && (
-        <div className="mt-1 flex w-full flex-col gap-1">
+        <div className="mt-2 flex w-full flex-col gap-1">
           <a
             href={tradeUrl}
             target="_blank"
@@ -211,7 +214,6 @@ export default function MatchCard({
           isActive={isActive && !isCompleted}
           onVote={handleVote}
           matchId={match.id}
-          side="A"
         />
 
         <div className="flex flex-col items-center justify-center gap-1 px-1">
@@ -227,7 +229,6 @@ export default function MatchCard({
           isActive={isActive && !isCompleted}
           onVote={handleVote}
           matchId={match.id}
-          side="B"
         />
       </div>
 
@@ -241,7 +242,9 @@ export default function MatchCard({
 
       <div className="flex justify-between text-xs text-white/30">
         <span>{match.tokenA.symbol}</span>
-        <span>{match.baselineVolumeA > 0 ? "growth ratio" : "volume split"}</span>
+        <span>
+          {match.baselineVolumeA > 0 ? "growth ratio" : "volume split"}
+        </span>
         <span>{match.tokenB.symbol}</span>
       </div>
     </div>
