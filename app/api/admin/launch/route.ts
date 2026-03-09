@@ -59,10 +59,16 @@ export async function POST(req: NextRequest) {
     getArchivedTournaments().catch(() => []),
     getActiveTournaments().catch(() => []),
   ]);
-  const month = new Date().toLocaleString("en-US", { month: "long", year: "numeric" });
+  const month = new Date().toLocaleString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
   const allSoFar = [...active, ...archived];
   const sameMonth = allSoFar.filter((t) => t.name.includes(month));
-  const suffix = sameMonth.length > 0 ? ` ${String.fromCharCode(65 + sameMonth.length)}` : "";
+  const suffix =
+    sameMonth.length > 0
+      ? ` ${String.fromCharCode(65 + sameMonth.length)}`
+      : "";
   const name = `${month}${suffix} Bracket`;
 
   const tournament = createTournament(name, enriched);

@@ -15,7 +15,9 @@ export default async function Home() {
   const latestCompleted = archivedTournaments[0] ?? null;
   const allTournaments = [
     ...activeTournaments,
-    ...archivedTournaments.filter((t) => !activeTournaments.find((a) => a.id === t.id)),
+    ...archivedTournaments.filter(
+      (t) => !activeTournaments.find((a) => a.id === t.id),
+    ),
   ];
 
   return (
@@ -51,7 +53,9 @@ export default async function Home() {
               href="/tournaments"
               className="rounded-2xl border border-white/20 px-8 py-4 text-lg font-black text-white transition-colors hover:border-[#f5c542]/50 hover:text-[#f5c542]"
             >
-              {activeTournaments.length > 0 ? "View Live Brackets" : "View Tournaments"}
+              {activeTournaments.length > 0
+                ? "View Live Brackets"
+                : "View Tournaments"}
             </Link>
           </div>
         </div>

@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getTournamentById, saveTournament, archiveTournament, removeTournamentFromActive } from "@/lib/kv";
+import {
+  getTournamentById,
+  saveTournament,
+  archiveTournament,
+  removeTournamentFromActive,
+} from "@/lib/kv";
 import { resolveMatch, advanceRound, getTotalRounds } from "@/lib/tournament";
 import { getTokens } from "@/lib/bags";
 
@@ -16,12 +21,18 @@ export async function POST(req: NextRequest) {
   const { tournamentId } = body as { tournamentId?: string };
 
   if (!tournamentId) {
-    return NextResponse.json({ error: "Missing tournamentId." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing tournamentId." },
+      { status: 400 },
+    );
   }
 
   const tournament = await getTournamentById(tournamentId);
   if (!tournament) {
-    return NextResponse.json({ error: "Tournament not found." }, { status: 404 });
+    return NextResponse.json(
+      { error: "Tournament not found." },
+      { status: 404 },
+    );
   }
   if (tournament.status !== "active") {
     return NextResponse.json(
@@ -43,7 +54,10 @@ export async function POST(req: NextRequest) {
   }
 
   // Re-fetch live volumes for all tokens in unresolved matches
-  const unresolvedMints = unresolved.flatMap((m) => [m.tokenA.mint, m.tokenB.mint]);
+  const unresolvedMints = unresolved.flatMap((m) => [
+    m.tokenA.mint,
+    m.tokenB.mint,
+  ]);
   const uniqueMints = [...new Set(unresolvedMints)];
   const liveTokens = await getTokens(uniqueMints).catch(() => []);
 
