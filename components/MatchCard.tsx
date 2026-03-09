@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import type { Match } from "@/types";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { matchScores } from "@/lib/tournament";
 
 interface MatchCardProps {
   match: Match;
@@ -66,6 +67,7 @@ function TokenSide({
   volume,
   baseline,
   votes,
+  score,
   isWinner,
   isActive,
   onVote,
@@ -75,6 +77,7 @@ function TokenSide({
   volume: number;
   baseline: number;
   votes: number;
+  score: number;
   isWinner: boolean;
   isActive: boolean;
   onVote?: (matchId: string, mint: string) => Promise<void>;
@@ -130,9 +133,15 @@ function TokenSide({
       </div>
 
       <div className="align-center flex w-full flex-col justify-center gap-1">
+        {/* Composite score */}
+        <div className="text-center">
+          <div className="text-lg font-bold text-white">{score}%</div>
+          <div className="text-xs text-white/40">score</div>
+        </div>
+
         {/* Volume / Growth */}
         <div className="text-center">
-          <div className="text-lg font-bold text-[#f5c542]">
+          <div className="text-sm font-bold text-[#f5c542]">
             {formatGrowth(volume, baseline)}
           </div>
           <div className="text-xs text-white/40">
@@ -188,6 +197,7 @@ export default function MatchCard({
 }: MatchCardProps) {
   const { connected } = useWallet();
   const isCompleted = !!match.winnerId;
+  const { scoreA, scoreB } = matchScores(match);
 
   const handleVote =
     connected && isActive && onVote
@@ -210,6 +220,7 @@ export default function MatchCard({
           volume={match.volumeA}
           baseline={match.baselineVolumeA}
           votes={match.votesA}
+          score={scoreA}
           isWinner={match.winnerId === match.tokenA.mint}
           isActive={isActive && !isCompleted}
           onVote={handleVote}
@@ -225,6 +236,7 @@ export default function MatchCard({
           volume={match.volumeB}
           baseline={match.baselineVolumeB}
           votes={match.votesB}
+          score={scoreB}
           isWinner={match.winnerId === match.tokenB.mint}
           isActive={isActive && !isCompleted}
           onVote={handleVote}

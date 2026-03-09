@@ -40,15 +40,40 @@ export function seedBracket(tokens: Token[]): Match[] {
 }
 
 const VOLUME_FLOOR = 100; // $100 minimum baseline to prevent division by near-zero
+const VOLUME_WEIGHT = 0.85;
+const VOTE_WEIGHT = 0.15;
 
 export function resolveMatch(match: Match): string {
-  // Growth ratio = current volume / baseline; higher ratio wins
+  // Normalize both signals to a 0–1 share of the matchup, then blend
   const ratioA = match.volumeA / Math.max(match.baselineVolumeA, VOLUME_FLOOR);
   const ratioB = match.volumeB / Math.max(match.baselineVolumeB, VOLUME_FLOOR);
-  if (ratioA !== ratioB) {
-    return ratioA > ratioB ? match.tokenA.mint : match.tokenB.mint;
-  }
-  return match.votesA >= match.votesB ? match.tokenA.mint : match.tokenB.mint;
+  const totalRatio = ratioA + ratioB;
+  const volumeShareA = totalRatio > 0 ? ratioA / totalRatio : 0.5;
+
+  const totalVotes = match.votesA + match.votesB;
+  const voteShareA = totalVotes > 0 ? match.votesA / totalVotes : 0.5;
+
+  const scoreA = VOLUME_WEIGHT * volumeShareA + VOTE_WEIGHT * voteShareA;
+  const scoreB = VOLUME_WEIGHT * (1 - volumeShareA) + VOTE_WEIGHT * (1 - voteShareA);
+
+  return scoreA >= scoreB ? match.tokenA.mint : match.tokenB.mint;
+}
+
+// Returns the live composite score for each token as a percentage (0–100)
+export function matchScores(match: Match): { scoreA: number; scoreB: number } {
+  const ratioA = match.volumeA / Math.max(match.baselineVolumeA, VOLUME_FLOOR);
+  const ratioB = match.volumeB / Math.max(match.baselineVolumeB, VOLUME_FLOOR);
+  const totalRatio = ratioA + ratioB;
+  const volumeShareA = totalRatio > 0 ? ratioA / totalRatio : 0.5;
+
+  const totalVotes = match.votesA + match.votesB;
+  const voteShareA = totalVotes > 0 ? match.votesA / totalVotes : 0.5;
+
+  const scoreA = VOLUME_WEIGHT * volumeShareA + VOTE_WEIGHT * voteShareA;
+  return {
+    scoreA: Math.round(scoreA * 100),
+    scoreB: Math.round((1 - scoreA) * 100),
+  };
 }
 
 export function advanceRound(tournament: Tournament): Match[] {
