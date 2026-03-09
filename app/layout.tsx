@@ -13,10 +13,44 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = "https://bagsbracket.xyz";
+const SITE_TITLE = "BagsBracket — Token Elimination Tournament on Bags.fm";
+const SITE_DESCRIPTION =
+  "March Madness for crypto tokens. Bags.fm tokens compete in head-to-head elimination rounds decided by real trading volume on Solana. Vote, trade, and campaign for your token.";
+
 export const metadata: Metadata = {
-  title: "BagsBracket — Token Elimination Tournament on Bags.fm",
-  description:
-    "March Madness for crypto tokens. 8 tokens compete in head-to-head matches decided by real trading volume on Bags.fm (Solana).",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    template: "%s | BagsBracket",
+  },
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "crypto tournament",
+    "Bags.fm",
+    "Solana",
+    "token bracket",
+    "meme coins",
+    "DeFi",
+    "March Madness crypto",
+    "token competition",
+  ],
+  openGraph: {
+    type: "website",
+    siteName: "BagsBracket",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: [
       { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },

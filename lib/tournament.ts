@@ -54,7 +54,8 @@ export function resolveMatch(match: Match): string {
   const voteShareA = totalVotes > 0 ? match.votesA / totalVotes : 0.5;
 
   const scoreA = VOLUME_WEIGHT * volumeShareA + VOTE_WEIGHT * voteShareA;
-  const scoreB = VOLUME_WEIGHT * (1 - volumeShareA) + VOTE_WEIGHT * (1 - voteShareA);
+  const scoreB =
+    VOLUME_WEIGHT * (1 - volumeShareA) + VOTE_WEIGHT * (1 - voteShareA);
 
   return scoreA >= scoreB ? match.tokenA.mint : match.tokenB.mint;
 }

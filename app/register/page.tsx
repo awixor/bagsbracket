@@ -71,7 +71,10 @@ export default function RegisterPage() {
     if (res.ok) {
       setStep({ kind: "submitted" });
     } else {
-      setStep({ kind: "error", message: data.error ?? "Something went wrong." });
+      setStep({
+        kind: "error",
+        message: data.error ?? "Something went wrong.",
+      });
     }
   }
 

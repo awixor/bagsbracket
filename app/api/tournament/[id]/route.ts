@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { getTournamentById, saveTournament, hasVoted, recordVote } from "@/lib/kv";
+import {
+  getTournamentById,
+  saveTournament,
+  hasVoted,
+  recordVote,
+} from "@/lib/kv";
 import { SEED_TOURNAMENT } from "@/data/seed";
 
 export async function GET(
@@ -11,7 +16,10 @@ export async function GET(
   // Fall back to seed only if the ID matches the seed tournament
   if (!tournament) {
     if (id === SEED_TOURNAMENT.id) return NextResponse.json(SEED_TOURNAMENT);
-    return NextResponse.json({ error: "Tournament not found" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Tournament not found" },
+      { status: 404 },
+    );
   }
   return NextResponse.json(tournament);
 }
@@ -36,10 +44,14 @@ export async function POST(
   }
 
   const tournament = await getTournamentById(id).catch(() => null);
-  const state = tournament ?? (id === SEED_TOURNAMENT.id ? SEED_TOURNAMENT : null);
+  const state =
+    tournament ?? (id === SEED_TOURNAMENT.id ? SEED_TOURNAMENT : null);
 
   if (!state) {
-    return NextResponse.json({ error: "Tournament not found" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Tournament not found" },
+      { status: 404 },
+    );
   }
 
   const match = state.matches.find((m) => m.id === matchId);

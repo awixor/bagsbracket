@@ -19,8 +19,7 @@ export async function POST(req: NextRequest) {
     if (!mint.endsWith("BAGS")) {
       return NextResponse.json(
         {
-          error:
-            "Not a Bags.fm token. Bags.fm token mints end in 'BAGS'.",
+          error: "Not a Bags.fm token. Bags.fm token mints end in 'BAGS'.",
         },
         { status: 400 },
       );
