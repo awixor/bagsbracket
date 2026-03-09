@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useParams } from "next/navigation";
 import { useWallet } from "@solana/wallet-adapter-react";
 import type { Tournament } from "@/types";
 import Bracket from "@/components/Bracket";
@@ -12,6 +13,7 @@ import Link from "next/link";
 const POLL_INTERVAL_MS = 60_000;
 
 export default function BracketPage() {
+  const { id } = useParams<{ id: string }>();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +22,7 @@ export default function BracketPage() {
 
   const fetchTournament = useCallback(async () => {
     try {
-      const res = await fetch("/api/tournament");
+      const res = await fetch(`/api/tournament/${id}`);
       if (!res.ok) throw new Error("Failed to load tournament");
       const data = await res.json();
       // Rehydrate dates
@@ -37,7 +39,7 @@ export default function BracketPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [id]);
 
   // Initial fetch
   useEffect(() => {
@@ -55,7 +57,7 @@ export default function BracketPage() {
     if (!publicKey) {
       throw new Error("Connect your wallet to vote.");
     }
-    const res = await fetch("/api/tournament", {
+    const res = await fetch(`/api/tournament/${id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import type { TokenRegistration } from "@/types";
+import Link from "next/link";
+import type { TokenRegistration, Tournament } from "@/types";
 
 const TOURNAMENT_SIZE = 8;
 
@@ -93,11 +94,11 @@ export default function AdminPage() {
     ok: boolean;
     message: string;
   } | null>(null);
-  const [resolving, setResolving] = useState(false);
-  const [resolveResult, setResolveResult] = useState<{
-    ok: boolean;
-    message: string;
-  } | null>(null);
+  const [activeTournaments, setActiveTournaments] = useState<Tournament[]>([]);
+  const [resolving, setResolving] = useState<string | null>(null);
+  const [resolveResults, setResolveResults] = useState<
+    Record<string, { ok: boolean; message: string }>
+  >({});
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -118,6 +119,12 @@ export default function AdminPage() {
     setRegistrations(data.registrations ?? []);
     setAuthed(true);
     setLoading(false);
+
+    const tRes = await fetch("/api/tournament");
+    if (tRes.ok) {
+      const tournaments = await tRes.json();
+      setActiveTournaments(Array.isArray(tournaments) ? tournaments : []);
+    }
   }
 
   async function handleLaunch() {
@@ -137,23 +144,34 @@ export default function AdminPage() {
     setLaunching(false);
   }
 
-  async function handleResolve() {
-    setResolving(true);
-    setResolveResult(null);
+  async function handleResolve(tournamentId: string) {
+    setResolving(tournamentId);
+    setResolveResults((prev) => {
+      const next = { ...prev };
+      delete next[tournamentId];
+      return next;
+    });
     const res = await fetch("/api/admin/resolve", {
       method: "POST",
-      headers: { "x-admin-secret": secret },
+      headers: { "Content-Type": "application/json", "x-admin-secret": secret },
+      body: JSON.stringify({ tournamentId }),
     });
     const data = await res.json();
-    setResolveResult({
-      ok: res.ok,
-      message: res.ok
-        ? data.status === "completed"
-          ? "Tournament completed! 🏆"
-          : `Round resolved. Advanced to Round ${data.nextRound}.`
-        : (data.error ?? "Resolve failed."),
-    });
-    setResolving(false);
+    setResolveResults((prev) => ({
+      ...prev,
+      [tournamentId]: {
+        ok: res.ok,
+        message: res.ok
+          ? data.status === "completed"
+            ? "Tournament completed! 🏆"
+            : `Round resolved. Advanced to Round ${data.nextRound}.`
+          : (data.error ?? "Resolve failed."),
+      },
+    }));
+    if (res.ok && data.status === "completed") {
+      setActiveTournaments((prev) => prev.filter((t) => t.id !== tournamentId));
+    }
+    setResolving(null);
   }
 
   async function handleReview(id: string, status: "approved" | "rejected") {
@@ -251,31 +269,54 @@ export default function AdminPage() {
           )}
         </div>
 
-        {/* Resolve round */}
-        <div className="mb-8 rounded-xl border border-white/10 bg-white/5 px-5 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm font-bold text-white">Resolve Current Round</div>
-              <div className="mt-0.5 text-xs text-white/40">
-                Picks winners for all unresolved matches and advances to the next round.
-              </div>
+        {/* Active tournaments — per-tournament resolve */}
+        {activeTournaments.length > 0 && (
+          <section className="mb-8">
+            <h2 className="mb-3 text-sm font-bold tracking-widest text-white/40 uppercase">
+              Active Tournaments
+            </h2>
+            <div className="flex flex-col gap-3">
+              {activeTournaments.map((t) => (
+                <div
+                  key={t.id}
+                  className="rounded-xl border border-white/10 bg-white/5 px-5 py-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-white">{t.name}</span>
+                        <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-bold text-green-400">
+                          Round {t.currentRound}
+                        </span>
+                      </div>
+                      <Link
+                        href={`/bracket/${t.id}`}
+                        target="_blank"
+                        className="mt-0.5 font-mono text-xs text-white/30 hover:text-[#f5c542]"
+                      >
+                        {t.id}
+                      </Link>
+                    </div>
+                    <button
+                      onClick={() => handleResolve(t.id)}
+                      disabled={resolving === t.id}
+                      className="cursor-pointer rounded-lg border border-white/20 px-4 py-1.5 text-sm font-bold text-white transition-colors hover:border-[#f5c542]/50 hover:text-[#f5c542] disabled:opacity-50"
+                    >
+                      {resolving === t.id ? "Resolving..." : "Resolve Round"}
+                    </button>
+                  </div>
+                  {resolveResults[t.id] && (
+                    <p
+                      className={`mt-2 text-sm font-medium ${resolveResults[t.id].ok ? "text-green-400" : "text-red-400"}`}
+                    >
+                      {resolveResults[t.id].message}
+                    </p>
+                  )}
+                </div>
+              ))}
             </div>
-            <button
-              onClick={handleResolve}
-              disabled={resolving}
-              className="cursor-pointer rounded-lg border border-white/20 px-4 py-1.5 text-sm font-bold text-white transition-colors hover:border-[#f5c542]/50 hover:text-[#f5c542] disabled:opacity-50"
-            >
-              {resolving ? "Resolving..." : "Resolve Round"}
-            </button>
-          </div>
-          {resolveResult && (
-            <p
-              className={`mt-2 text-sm font-medium ${resolveResult.ok ? "text-green-400" : "text-red-400"}`}
-            >
-              {resolveResult.message}
-            </p>
-          )}
-        </div>
+          </section>
+        )}
 
         {/* Pending */}
         {pending.length > 0 && (

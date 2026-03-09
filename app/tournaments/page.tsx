@@ -1,132 +1,17 @@
-import Image from "next/image";
-import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import { getActiveTournament, getArchivedTournaments } from "@/lib/kv";
-import type { Tournament, Token } from "@/types";
-
-function getWinner(tournament: Tournament): Token | null {
-  if (tournament.status !== "completed") return null;
-  const totalRounds = Math.log2(tournament.size);
-  const finalMatch = tournament.matches.find((m) => m.round === totalRounds);
-  if (!finalMatch?.winnerId) return null;
-  return finalMatch.winnerId === finalMatch.tokenA.mint
-    ? finalMatch.tokenA
-    : finalMatch.tokenB;
-}
-
-function TournamentCard({ tournament }: { tournament: Tournament }) {
-  const isActive = tournament.status === "active";
-  const winner = getWinner(tournament);
-  const totalRounds = Math.log2(tournament.size);
-  const completedRounds = isActive
-    ? tournament.currentRound - 1
-    : totalRounds;
-
-  return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 transition-colors hover:border-white/20">
-      {/* Header row */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-black text-white">{tournament.name}</h2>
-          <p className="mt-0.5 text-xs text-white/40">
-            {new Date(tournament.createdAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })}
-          </p>
-        </div>
-        {isActive ? (
-          <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold text-green-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
-            LIVE
-          </span>
-        ) : (
-          <span className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white/40">
-            COMPLETED
-          </span>
-        )}
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-3 text-center">
-        <div className="rounded-lg bg-black/30 py-2">
-          <div className="text-lg font-black text-[#f5c542]">{tournament.size}</div>
-          <div className="text-xs text-white/40">Tokens</div>
-        </div>
-        <div className="rounded-lg bg-black/30 py-2">
-          <div className="text-lg font-black text-white">
-            {isActive ? tournament.currentRound : totalRounds}
-          </div>
-          <div className="text-xs text-white/40">
-            {isActive ? "Current Round" : "Rounds"}
-          </div>
-        </div>
-        <div className="rounded-lg bg-black/30 py-2">
-          <div className="text-lg font-black text-white">
-            {tournament.matches.filter((m) => m.winnerId).length}
-          </div>
-          <div className="text-xs text-white/40">Matches Played</div>
-        </div>
-      </div>
-
-      {/* Winner row (completed only) */}
-      {winner && (
-        <div className="flex items-center gap-3 rounded-xl border border-[#f5c542]/30 bg-[#f5c542]/5 px-4 py-3">
-          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-[#f5c542]/50">
-            {winner.logo ? (
-              <Image
-                src={winner.logo}
-                alt={winner.name}
-                fill
-                className="object-cover"
-                unoptimized
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-sm font-black text-[#f5c542]">
-                {winner.symbol.slice(0, 2)}
-              </div>
-            )}
-          </div>
-          <div>
-            <div className="text-xs font-bold tracking-widest text-[#f5c542] uppercase">
-              Champion
-            </div>
-            <div className="font-black text-white">
-              {winner.name}{" "}
-              <span className="text-sm font-normal text-white/40">
-                ${winner.symbol}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* CTA */}
-      <Link
-        href={`/bracket/${tournament.id}`}
-        className={`block w-full rounded-xl py-2.5 text-center text-sm font-black transition-colors ${
-          isActive
-            ? "bg-[#f5c542] text-[#0a0a0a] hover:bg-[#f5c542]/90"
-            : "border border-white/10 text-white/60 hover:border-white/20 hover:text-white"
-        }`}
-      >
-        {isActive ? "View Bracket & Vote" : "View Final Bracket"}
-      </Link>
-    </div>
-  );
-}
+import TournamentList from "@/components/TournamentList";
+import { getActiveTournaments, getArchivedTournaments } from "@/lib/kv";
 
 export default async function TournamentsPage() {
   const [active, archived] = await Promise.all([
-    getActiveTournament().catch(() => null),
+    getActiveTournaments().catch(() => []),
     getArchivedTournaments().catch(() => []),
   ]);
 
   const all = [
-    ...(active ? [active] : []),
-    ...archived.filter((t) => t.id !== active?.id),
+    ...active,
+    ...archived.filter((t) => !active.find((a) => a.id === t.id)),
   ];
 
   return (
@@ -141,15 +26,7 @@ export default async function TournamentsPage() {
           </p>
         </div>
 
-        {all.length === 0 ? (
-          <p className="text-center text-white/30">No tournaments yet.</p>
-        ) : (
-          <div className="flex flex-col gap-4">
-            {all.map((t) => (
-              <TournamentCard key={t.id} tournament={t} />
-            ))}
-          </div>
-        )}
+        <TournamentList tournaments={all} />
 
         <div className="mt-12 text-center">
           <SiteFooter />

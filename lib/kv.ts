@@ -40,27 +40,53 @@ export async function getApprovedCount(): Promise<number> {
 }
 
 // ---------------------------------------------------------------------------
-// Tournament persistence
+// Tournament persistence — multi-tournament support
 // ---------------------------------------------------------------------------
 
-const TOURNAMENT_KEY = "active_tournament";
+const tournamentKey = (id: string) => `tournament:${id}`;
+const ACTIVE_IDS_KEY = "active_tournament_ids";
 
-export async function getActiveTournament(): Promise<Tournament | null> {
-  return kv.get<Tournament>(TOURNAMENT_KEY);
+export async function getActiveTournamentIds(): Promise<string[]> {
+  const data = await kv.get<string[]>(ACTIVE_IDS_KEY);
+  return data ?? [];
+}
+
+export async function getTournamentById(
+  id: string,
+): Promise<Tournament | null> {
+  return kv.get<Tournament>(tournamentKey(id));
 }
 
 export async function saveTournament(tournament: Tournament): Promise<void> {
-  await kv.set(TOURNAMENT_KEY, tournament);
+  await kv.set(tournamentKey(tournament.id), tournament);
+  // Keep active IDs list in sync
+  if (tournament.status === "active") {
+    const ids = await getActiveTournamentIds();
+    if (!ids.includes(tournament.id)) {
+      await kv.set(ACTIVE_IDS_KEY, [...ids, tournament.id]);
+    }
+  }
 }
 
-export async function updateTournament(
-  updater: (t: Tournament) => Tournament,
-): Promise<Tournament | null> {
-  const current = await getActiveTournament();
-  if (!current) return null;
-  const updated = updater(current);
-  await kv.set(TOURNAMENT_KEY, updated);
-  return updated;
+export async function removeTournamentFromActive(id: string): Promise<void> {
+  const ids = await getActiveTournamentIds();
+  await kv.set(
+    ACTIVE_IDS_KEY,
+    ids.filter((i) => i !== id),
+  );
+}
+
+export async function getActiveTournaments(): Promise<Tournament[]> {
+  const ids = await getActiveTournamentIds();
+  if (ids.length === 0) return [];
+  const results = await Promise.all(ids.map((id) => getTournamentById(id)));
+  return results.filter((t): t is Tournament => t !== null);
+}
+
+// Backward-compat helper: returns first active tournament (used by homepage fallback)
+export async function getActiveTournament(): Promise<Tournament | null> {
+  const all = await getActiveTournaments();
+  return all[0] ?? null;
 }
 
 // ---------------------------------------------------------------------------

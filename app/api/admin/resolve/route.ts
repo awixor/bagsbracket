@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getActiveTournament, saveTournament, archiveTournament } from "@/lib/kv";
+import { getTournamentById, saveTournament, archiveTournament, removeTournamentFromActive } from "@/lib/kv";
 import { resolveMatch, advanceRound, getTotalRounds } from "@/lib/tournament";
 import { getTokens } from "@/lib/bags";
 
@@ -12,9 +12,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const tournament = await getActiveTournament();
+  const body = await req.json().catch(() => ({}));
+  const { tournamentId } = body as { tournamentId?: string };
+
+  if (!tournamentId) {
+    return NextResponse.json({ error: "Missing tournamentId." }, { status: 400 });
+  }
+
+  const tournament = await getTournamentById(tournamentId);
   if (!tournament) {
-    return NextResponse.json({ error: "No active tournament." }, { status: 404 });
+    return NextResponse.json({ error: "Tournament not found." }, { status: 404 });
   }
   if (tournament.status !== "active") {
     return NextResponse.json(
@@ -62,6 +69,7 @@ export async function POST(req: NextRequest) {
     const completed = { ...updatedTournament, status: "completed" as const };
     await saveTournament(completed);
     await archiveTournament(completed);
+    await removeTournamentFromActive(tournament.id);
     return NextResponse.json({ status: "completed" });
   }
 

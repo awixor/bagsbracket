@@ -3,7 +3,6 @@ import {
   getRegistrationsByStatus,
   saveTournament,
   markRegistrationsLaunched,
-  getActiveTournament,
   getArchivedTournaments,
 } from "@/lib/kv";
 import { createTournament } from "@/lib/tournament";
@@ -18,14 +17,6 @@ function isAuthorized(req: NextRequest) {
 export async function POST(req: NextRequest) {
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const existing = await getActiveTournament();
-  if (existing && existing.status !== "completed") {
-    return NextResponse.json(
-      { error: "A tournament is already active." },
-      { status: 409 },
-    );
   }
 
   const approved = await getRegistrationsByStatus("approved");
