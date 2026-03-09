@@ -17,10 +17,34 @@ function formatVolume(vol: number): string {
   return `$${vol.toFixed(2)}`;
 }
 
-function VolumeBar({ volumeA, volumeB }: { volumeA: number; volumeB: number }) {
-  const total = volumeA + volumeB;
+const VOLUME_FLOOR = 100;
+
+function growthRatio(volume: number, baseline: number): number {
+  return volume / Math.max(baseline, VOLUME_FLOOR);
+}
+
+function formatGrowth(volume: number, baseline: number): string {
+  if (baseline === 0) return formatVolume(volume);
+  const ratio = growthRatio(volume, baseline);
+  return `${ratio.toFixed(2)}x`;
+}
+
+function VolumeBar({
+  volumeA,
+  volumeB,
+  baselineA,
+  baselineB,
+}: {
+  volumeA: number;
+  volumeB: number;
+  baselineA: number;
+  baselineB: number;
+}) {
+  const ratioA = growthRatio(volumeA, baselineA);
+  const ratioB = growthRatio(volumeB, baselineB);
+  const total = ratioA + ratioB;
   if (total === 0) return null;
-  const pctA = Math.round((volumeA / total) * 100);
+  const pctA = Math.round((ratioA / total) * 100);
   const pctB = 100 - pctA;
 
   return (
@@ -40,6 +64,7 @@ function VolumeBar({ volumeA, volumeB }: { volumeA: number; volumeB: number }) {
 function TokenSide({
   token,
   volume,
+  baseline,
   votes,
   isWinner,
   isActive,
@@ -49,6 +74,7 @@ function TokenSide({
 }: {
   token: Match["tokenA"];
   volume: number;
+  baseline: number;
   votes: number;
   isWinner: boolean;
   isActive: boolean;
@@ -102,12 +128,14 @@ function TokenSide({
         <div className="text-xs text-white/40">${token.symbol}</div>
       </div>
 
-      {/* Volume */}
+      {/* Volume / Growth */}
       <div className="text-center">
         <div className="text-lg font-bold text-[#f5c542]">
-          {formatVolume(volume)}
+          {formatGrowth(volume, baseline)}
         </div>
-        <div className="text-xs text-white/40">volume</div>
+        <div className="text-xs text-white/40">
+          {baseline > 0 ? "growth" : "volume"}
+        </div>
       </div>
 
       {/* Votes */}
@@ -177,6 +205,7 @@ export default function MatchCard({
         <TokenSide
           token={match.tokenA}
           volume={match.volumeA}
+          baseline={match.baselineVolumeA}
           votes={match.votesA}
           isWinner={match.winnerId === match.tokenA.mint}
           isActive={isActive && !isCompleted}
@@ -192,6 +221,7 @@ export default function MatchCard({
         <TokenSide
           token={match.tokenB}
           volume={match.volumeB}
+          baseline={match.baselineVolumeB}
           votes={match.votesB}
           isWinner={match.winnerId === match.tokenB.mint}
           isActive={isActive && !isCompleted}
@@ -201,12 +231,17 @@ export default function MatchCard({
         />
       </div>
 
-      {/* Volume bar */}
-      <VolumeBar volumeA={match.volumeA} volumeB={match.volumeB} />
+      {/* Growth bar */}
+      <VolumeBar
+        volumeA={match.volumeA}
+        volumeB={match.volumeB}
+        baselineA={match.baselineVolumeA}
+        baselineB={match.baselineVolumeB}
+      />
 
       <div className="flex justify-between text-xs text-white/30">
         <span>{match.tokenA.symbol}</span>
-        <span>volume split</span>
+        <span>{match.baselineVolumeA > 0 ? "growth ratio" : "volume split"}</span>
         <span>{match.tokenB.symbol}</span>
       </div>
     </div>

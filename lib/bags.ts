@@ -96,9 +96,10 @@ export async function getToken(mint: string): Promise<Token> {
  */
 export async function getTokenVolume(
   mint: string,
-  _since: Date,
+  // _since: Date,
 ): Promise<number> {
   const token = await getToken(mint);
+
   return token.volume24h;
 }
 

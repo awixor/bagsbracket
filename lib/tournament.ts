@@ -15,6 +15,8 @@ function createMatch(
     tokenB,
     startTime,
     endTime,
+    baselineVolumeA: tokenA.volume24h,
+    baselineVolumeB: tokenB.volume24h,
     volumeA: tokenA.volume24h,
     volumeB: tokenB.volume24h,
     votesA: 0,
@@ -37,12 +39,14 @@ export function seedBracket(tokens: Token[]): Match[] {
   return matches;
 }
 
+const VOLUME_FLOOR = 100; // $100 minimum baseline to prevent division by near-zero
+
 export function resolveMatch(match: Match): string {
-  // Volume-based winner, fall back to votes if tied
-  if (match.volumeA !== match.volumeB) {
-    return match.volumeA > match.volumeB
-      ? match.tokenA.mint
-      : match.tokenB.mint;
+  // Growth ratio = current volume / baseline; higher ratio wins
+  const ratioA = match.volumeA / Math.max(match.baselineVolumeA, VOLUME_FLOOR);
+  const ratioB = match.volumeB / Math.max(match.baselineVolumeB, VOLUME_FLOOR);
+  if (ratioA !== ratioB) {
+    return ratioA > ratioB ? match.tokenA.mint : match.tokenB.mint;
   }
   return match.votesA >= match.votesB ? match.tokenA.mint : match.tokenB.mint;
 }

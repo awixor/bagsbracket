@@ -106,6 +106,8 @@ function makeMatch(
     tokenB: b,
     startTime: now,
     endTime: plus24h(now),
+    baselineVolumeA: volumeA,
+    baselineVolumeB: volumeB,
     volumeA,
     volumeB,
     votesA,

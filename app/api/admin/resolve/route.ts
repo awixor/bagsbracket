@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getActiveTournament, saveTournament, archiveTournament } from "@/lib/kv";
 import { resolveMatch, advanceRound, getTotalRounds } from "@/lib/tournament";
+import { getTokens } from "@/lib/bags";
 
 function isAuthorized(req: NextRequest) {
   return req.headers.get("x-admin-secret") === process.env.ADMIN_SECRET;
@@ -34,10 +35,22 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Resolve all unresolved matches in the current round
+  // Re-fetch live volumes for all tokens in unresolved matches
+  const unresolvedMints = unresolved.flatMap((m) => [m.tokenA.mint, m.tokenB.mint]);
+  const uniqueMints = [...new Set(unresolvedMints)];
+  const liveTokens = await getTokens(uniqueMints).catch(() => []);
+
+  // Resolve all unresolved matches using fresh volumes
   const updatedMatches = tournament.matches.map((m) => {
     if (m.round !== tournament.currentRound || m.winnerId) return m;
-    return { ...m, winnerId: resolveMatch(m) };
+    const liveA = liveTokens.find((t) => t.mint === m.tokenA.mint);
+    const liveB = liveTokens.find((t) => t.mint === m.tokenB.mint);
+    const refreshed = {
+      ...m,
+      volumeA: liveA?.volume24h ?? m.volumeA,
+      volumeB: liveB?.volume24h ?? m.volumeB,
+    };
+    return { ...refreshed, winnerId: resolveMatch(refreshed) };
   });
 
   const updatedTournament = { ...tournament, matches: updatedMatches };

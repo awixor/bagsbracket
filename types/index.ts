@@ -17,6 +17,8 @@ export type Match = {
   startTime: Date;
   endTime: Date;
   winnerId?: string;
+  baselineVolumeA: number;
+  baselineVolumeB: number;
   volumeA: number;
   volumeB: number;
   votesA: number;
