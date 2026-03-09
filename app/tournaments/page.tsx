@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
+
+export const metadata: Metadata = {
+  title: "Tournaments",
+  description:
+    "Browse all live and past BagsBracket token elimination tournaments on Bags.fm.",
+};
 import SiteFooter from "@/components/SiteFooter";
 import TournamentList from "@/components/TournamentList";
 import { getActiveTournaments, getArchivedTournaments } from "@/lib/kv";
