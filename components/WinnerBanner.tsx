@@ -48,16 +48,24 @@ export default function WinnerBanner({
         </div>
       </div>
 
-      <div className="mb-1 text-xs text-white/30">{tournament.name}</div>
+      <div className="mb-4 text-xs text-white/30">{tournament.name}</div>
 
-      <a
-        href={`https://bags.fm/${winner.mint}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-4 inline-block rounded-xl border border-[#f5c542]/50 px-5 py-2 text-sm font-bold text-[#f5c542] transition-colors hover:bg-[#f5c542]/10"
-      >
-        Trade ${winner.symbol} on Bags.fm →
-      </a>
+      <div className="flex flex-col justify-center gap-2">
+        <a
+          href={`https://bags.fm/${winner.mint}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-xl border border-[#f5c542]/50 px-5 py-2 text-sm font-bold text-[#f5c542] transition-colors hover:bg-[#f5c542]/10"
+        >
+          Trade ${winner.symbol} on Bags.fm →
+        </a>
+        <Link
+          href={`/bracket/${tournament.id}`}
+          className="rounded-xl border border-white/10 px-5 py-2 text-sm font-bold text-white/50 transition-colors hover:border-white/20 hover:text-white"
+        >
+          View Tournament
+        </Link>
+      </div>
     </div>
   );
 }

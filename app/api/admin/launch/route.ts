@@ -4,6 +4,7 @@ import {
   saveTournament,
   markRegistrationsLaunched,
   getActiveTournament,
+  getArchivedTournaments,
 } from "@/lib/kv";
 import { createTournament } from "@/lib/tournament";
 import { getTokens } from "@/lib/bags";
@@ -62,7 +63,12 @@ export async function POST(req: NextRequest) {
     );
   });
 
-  const tournament = createTournament("BagsBracket Tournament", enriched);
+  const archived = await getArchivedTournaments().catch(() => []);
+  const season = archived.length + 1;
+  const month = new Date().toLocaleString("en-US", { month: "long", year: "numeric" });
+  const name = `Season ${season} — ${month}`;
+
+  const tournament = createTournament(name, enriched);
   await saveTournament(tournament);
   await markRegistrationsLaunched(
     selected.map((r) => r.id),

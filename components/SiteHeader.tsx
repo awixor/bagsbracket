@@ -23,12 +23,6 @@ export default function SiteHeader() {
         >
           Register
         </Link>
-        <Link
-          href="/demo"
-          className="rounded-lg bg-[#f5c542] px-3 py-1.5 text-sm font-bold text-[#0a0a0a] transition-colors hover:bg-[#f5c542]/90"
-        >
-          Live Demo
-        </Link>
         <WalletButton />
       </div>
     </header>
