@@ -2,17 +2,17 @@ const STEPS = [
   {
     icon: "🏆",
     title: "Enter Your Token",
-    body: "Token creators submit their Bags.fm token mint address to join the weekly bracket. First 8 tokens fill the bracket.",
+    body: "Token creators submit their Bags.fm mint address to join a bracket. Every 8 approved tokens trigger a new tournament — multiple can run at the same time.",
   },
   {
     icon: "⚡",
     title: "Compete Head-to-Head",
-    body: "Tokens face off in 24-hour matches. The winner is decided by trading volume — whichever token generates more fees on Bags.fm advances.",
+    body: "Tokens face off in 24-hour matches. The winner is decided by a composite score: 85% trading volume growth on Bags.fm and 15% community votes.",
   },
   {
-    icon: "🎯",
-    title: "Win & Get Featured",
-    body: "The tournament champion gets featured on the BagsBracket homepage and earns a shareable on-chain trophy card.",
+    icon: "🗳️",
+    title: "Vote & Trade to Win",
+    body: "Connect your wallet to vote once per match. Votes have real influence — a strong vote advantage can flip a close match. Trade on Bags.fm to boost your token's volume score.",
   },
 ];
 

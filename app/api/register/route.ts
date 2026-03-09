@@ -66,7 +66,13 @@ export async function POST(req: NextRequest) {
   } catch (err: unknown) {
     if (err instanceof Error && err.message === "Token already registered") {
       return NextResponse.json(
-        { error: "This token is already in the queue." },
+        { error: "This token is already in the review queue." },
+        { status: 409 },
+      );
+    }
+    if (err instanceof Error && err.message === "Token in active tournament") {
+      return NextResponse.json(
+        { error: "This token is currently competing in a tournament." },
         { status: 409 },
       );
     }

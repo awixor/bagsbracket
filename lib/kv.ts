@@ -17,9 +17,18 @@ export async function getRegistrationsByStatus(
 
 export async function addRegistration(reg: TokenRegistration): Promise<void> {
   const all = await getAllRegistrations();
-  if (all.find((r) => r.mint === reg.mint)) {
+  const existing = all.filter((r) => r.mint === reg.mint);
+
+  for (const r of existing) {
+    if (r.status === "rejected") continue;
+    if (r.tournamentId) {
+      const tournament = await getTournamentById(r.tournamentId);
+      if (tournament?.status === "completed") continue;
+      throw new Error("Token in active tournament");
+    }
     throw new Error("Token already registered");
   }
+
   await kv.set(QUEUE_KEY, [...all, reg]);
 }
 

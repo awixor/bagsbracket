@@ -4,6 +4,7 @@ import {
   saveTournament,
   markRegistrationsLaunched,
   getArchivedTournaments,
+  getActiveTournaments,
 } from "@/lib/kv";
 import { createTournament } from "@/lib/tournament";
 import { getTokens } from "@/lib/bags";
@@ -54,10 +55,15 @@ export async function POST(req: NextRequest) {
     );
   });
 
-  const archived = await getArchivedTournaments().catch(() => []);
-  const season = archived.length + 1;
+  const [archived, active] = await Promise.all([
+    getArchivedTournaments().catch(() => []),
+    getActiveTournaments().catch(() => []),
+  ]);
   const month = new Date().toLocaleString("en-US", { month: "long", year: "numeric" });
-  const name = `Season ${season} — ${month}`;
+  const allSoFar = [...active, ...archived];
+  const sameMonth = allSoFar.filter((t) => t.name.includes(month));
+  const suffix = sameMonth.length > 0 ? ` ${String.fromCharCode(65 + sameMonth.length)}` : "";
+  const name = `${month}${suffix} Bracket`;
 
   const tournament = createTournament(name, enriched);
   await saveTournament(tournament);
