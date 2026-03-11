@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getTournamentById } from "@/lib/kv";
+import { TournamentStatus } from "@/lib/routes";
 import BracketClient from "@/components/BracketClient";
 
 export async function generateMetadata({
@@ -10,7 +12,7 @@ export async function generateMetadata({
   const { id } = await params;
   const tournament = await getTournamentById(id).catch(() => null);
   const name = tournament?.name ?? "Bracket";
-  const isActive = tournament?.status === "active";
+  const isActive = tournament?.status === TournamentStatus.ACTIVE;
 
   return {
     title: name,
@@ -28,5 +30,8 @@ export default async function BracketPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  return <BracketClient id={id} />;
+  const initialData = await getTournamentById(id).catch(() => null);
+  if (!initialData) notFound();
+
+  return <BracketClient id={id} initialData={initialData} />;
 }
