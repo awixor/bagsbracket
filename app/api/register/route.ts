@@ -47,7 +47,8 @@ export async function POST(req: NextRequest) {
       logo: token?.logo ?? "",
       holders: token?.holders ?? 0,
       submittedAt: new Date().toISOString(),
-      status: "pending",
+      status: "approved",
+      reviewedAt: new Date().toISOString(),
     };
 
     await addRegistration(registration);
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
         logo: registration.logo,
         holders: registration.holders,
       },
-      message: "Token submitted for review. Check back soon!",
+      message: "Token approved! It will enter the next tournament.",
     });
   } catch (err: unknown) {
     if (err instanceof Error && err.message === "Token already registered") {

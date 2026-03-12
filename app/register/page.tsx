@@ -190,10 +190,10 @@ export default function RegisterPage() {
             <div className="flex flex-col items-center gap-6 py-4 text-center">
               <div className="text-5xl">🎉</div>
               <div>
-                <h1 className="text-2xl font-black text-white">Submitted!</h1>
+                <h1 className="text-2xl font-black text-white">You&apos;re In!</h1>
                 <p className="mt-2 text-sm leading-relaxed text-white/40">
-                  Your token is pending admin review. Once approved, it will be
-                  added to the next tournament queue.
+                  Your token has been approved and will enter the next
+                  tournament automatically.
                 </p>
               </div>
               <button
