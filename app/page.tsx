@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import HowItWorks from "@/components/HowItWorks";
 import QueueStatus from "@/components/QueueStatus";
@@ -5,8 +7,8 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import WinnerBanner from "@/components/WinnerBanner";
 import HallOfChampions from "@/components/HallOfChampions";
-import TournamentGrid from "@/components/TournamentGrid";
 import { getActiveTournaments, getArchivedTournaments } from "@/lib/kv";
+import TournamentList from "@/components/TournamentList";
 
 export default async function Home() {
   const [activeTournaments, archivedTournaments] = await Promise.all([
@@ -27,7 +29,6 @@ export default async function Home() {
       <SiteHeader />
 
       <main className="mx-auto flex max-w-5xl flex-col items-center gap-20 px-4 py-16 text-center">
-
         {/* Hero */}
         <div className="flex flex-col items-center gap-6">
           <div className="inline-block rounded-full border border-[#f5c542]/30 bg-[#f5c542]/10 px-4 py-1.5 text-xs font-bold tracking-widest text-[#f5c542] uppercase">
@@ -54,7 +55,9 @@ export default async function Home() {
               href="/tournaments"
               className="rounded-2xl border border-white/20 px-8 py-4 text-lg font-black text-white transition-colors hover:border-[#f5c542]/50 hover:text-[#f5c542]"
             >
-              {activeTournaments.length > 0 ? "View Live Brackets" : "View Tournaments"}
+              {activeTournaments.length > 0
+                ? "View Live Brackets"
+                : "View Tournaments"}
             </Link>
           </div>
         </div>
@@ -73,7 +76,7 @@ export default async function Home() {
             <h2 className="text-xs font-bold tracking-widest text-white/40 uppercase">
               Brackets
             </h2>
-            <TournamentGrid tournaments={allTournaments} />
+            <TournamentList tournaments={allTournaments} />
           </section>
         )}
 
