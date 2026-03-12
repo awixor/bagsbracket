@@ -17,16 +17,11 @@ export default function QueueStatus() {
 
   return (
     <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-white/5 p-6 text-left">
-      <div className="mb-3 flex items-center justify-between">
-        <div className="text-xs font-bold tracking-widest text-white/40 uppercase">
-          Next Tournament Queue
+      {approved !== null && (
+        <div className="mb-3 text-right text-sm font-bold text-[#f5c542]">
+          {approved} / {TOTAL} tokens registered
         </div>
-        {approved !== null && (
-          <span className="text-sm font-bold text-[#f5c542]">
-            {approved} / {TOTAL} tokens registered
-          </span>
-        )}
-      </div>
+      )}
 
       <div className="mb-4 h-2 overflow-hidden rounded-full bg-white/10">
         <div

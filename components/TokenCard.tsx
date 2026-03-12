@@ -37,7 +37,7 @@ export default function TokenCard({
     >
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-white/10">
+        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white/10">
           {token.logo ? (
             <Image
               src={token.logo}

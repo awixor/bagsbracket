@@ -153,7 +153,7 @@ function TokenSide({
         <div className="text-center text-xs text-white/60">{votes} votes</div>
 
         {isWinner && (
-          <span className="rounded-full bg-[#f5c542]/20 px-2 py-0.5 text-xs font-bold text-[#f5c542]">
+          <span className="rounded-full bg-[#f5c542]/20 px-2 py-0.5 text-center text-xs font-bold text-[#f5c542]">
             WINNER
           </span>
         )}

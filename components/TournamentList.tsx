@@ -15,80 +15,121 @@ function getWinner(tournament: Tournament): Token | null {
     : finalMatch.tokenB;
 }
 
+function TokenAvatar({ token, size = 8 }: { token: Token; size?: number }) {
+  const px = size * 4;
+  return (
+    <div
+      className="relative shrink-0 overflow-hidden rounded-full border-2 border-[#0a0a0a] bg-white/10"
+      style={{ width: px, height: px }}
+    >
+      {token.logo ? (
+        <Image
+          src={token.logo}
+          alt={token.name}
+          fill
+          className="object-cover"
+          unoptimized
+        />
+      ) : (
+        <div className="flex h-full w-full items-center justify-center text-[8px] font-black text-white/60">
+          {token.symbol.slice(0, 2)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function getParticipants(tournament: Tournament): Token[] {
+  const round1 = tournament.matches.filter((m) => m.round === 1);
+  return round1.flatMap((m) => [m.tokenA, m.tokenB]);
+}
+
 function TournamentRow({ tournament }: { tournament: Tournament }) {
   const isActive = tournament.status === "active";
   const winner = getWinner(tournament);
   const totalRounds = Math.log2(tournament.size);
+  const participants = getParticipants(tournament);
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 transition-colors hover:border-white/20">
+    <Link
+      href={`/bracket/${tournament.id}`}
+      className={`group flex flex-col gap-4 rounded-2xl border p-5 transition-colors ${
+        isActive
+          ? "border-[#f5c542]/30 bg-[#f5c542]/5 hover:border-[#f5c542]/50"
+          : "border-white/10 bg-white/5 hover:border-white/20"
+      }`}
+    >
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          {isActive ? (
+            <span className="flex items-center gap-1.5 rounded-full bg-green-500/20 px-2.5 py-1 text-xs font-bold text-green-400">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-400" />
+              LIVE
+            </span>
+          ) : (
+            <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold text-white/40">
+              COMPLETED
+            </span>
+          )}
           <h2 className="text-lg font-black text-white">{tournament.name}</h2>
-          <p className="mt-0.5 text-xs text-white/40">
-            {new Date(tournament.createdAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })}
-          </p>
         </div>
-        {isActive ? (
-          <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold text-green-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
-            LIVE
-          </span>
-        ) : (
-          <span className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white/40">
-            COMPLETED
-          </span>
-        )}
+        <span className="shrink-0 text-xs text-white/30">
+          {new Date(tournament.createdAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </span>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-3 text-center">
-        <div className="rounded-lg bg-black/30 py-2">
-          <div className="text-lg font-black text-[#f5c542]">
-            {tournament.size}
+      {/* Participants + stats row */}
+      <div className="flex items-center justify-between gap-4">
+        {participants.length > 0 && (
+          <div className="flex shrink-0">
+            {participants.map((token, i) => (
+              <div
+                key={token.mint}
+                style={{ marginLeft: i === 0 ? 0 : -8, zIndex: i }}
+              >
+                <TokenAvatar token={token} size={8} />
+              </div>
+            ))}
           </div>
-          <div className="text-xs text-white/40">Tokens</div>
-        </div>
-        <div className="rounded-lg bg-black/30 py-2">
-          <div className="text-lg font-black text-white">
-            {isActive ? `R${tournament.currentRound}` : `${totalRounds} Rounds`}
-          </div>
-          <div className="text-xs text-white/40">
-            {isActive ? "Current" : "Total"}
-          </div>
-        </div>
-        <div className="rounded-lg bg-black/30 py-2">
-          <div className="text-lg font-black text-white">
-            {tournament.matches.filter((m) => m.winnerId).length}
-          </div>
-          <div className="text-xs text-white/40">Matches</div>
+        )}
+
+        <div className="flex items-center gap-4 text-xs text-white/40">
+          <span>{tournament.size} tokens</span>
+          <span>{tournament.matches.filter((m) => m.winnerId).length} matches</span>
+          {isActive && (
+            <div className="flex items-center gap-1.5">
+              <div className="flex gap-1">
+                {Array.from({ length: totalRounds }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`h-1.5 w-6 rounded-full ${
+                      i < tournament.currentRound - 1
+                        ? "bg-[#f5c542]"
+                        : i === tournament.currentRound - 1
+                          ? "bg-[#f5c542]/50"
+                          : "bg-white/10"
+                    }`}
+                  />
+                ))}
+              </div>
+              <span>
+                Round {tournament.currentRound}/{totalRounds}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Champion (completed only) */}
       {winner && (
         <div className="flex items-center gap-3 rounded-xl border border-[#f5c542]/30 bg-[#f5c542]/5 px-4 py-3">
-          <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-[#f5c542]/50">
-            {winner.logo ? (
-              <Image
-                src={winner.logo}
-                alt={winner.name}
-                fill
-                className="object-cover"
-                unoptimized
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-xs font-black text-[#f5c542]">
-                {winner.symbol.slice(0, 2)}
-              </div>
-            )}
-          </div>
-          <div>
+          <TokenAvatar token={winner} size={9} />
+          <div className="text-left">
             <div className="text-xs font-bold tracking-widest text-[#f5c542] uppercase">
               Champion
             </div>
@@ -103,17 +144,16 @@ function TournamentRow({ tournament }: { tournament: Tournament }) {
       )}
 
       {/* CTA */}
-      <Link
-        href={`/bracket/${tournament.id}`}
-        className={`block w-full rounded-xl py-2.5 text-center text-sm font-black transition-colors ${
+      <div
+        className={`w-full rounded-xl py-2.5 text-center text-sm font-black transition-colors ${
           isActive
-            ? "bg-[#f5c542] text-[#0a0a0a] hover:bg-[#f5c542]/90"
-            : "border border-white/10 text-white/60 hover:border-white/20 hover:text-white"
+            ? "bg-[#f5c542] text-[#0a0a0a] group-hover:bg-[#f5c542]/90"
+            : "border border-white/10 text-white/60 group-hover:border-white/20 group-hover:text-white"
         }`}
       >
-        {isActive ? "View Bracket & Vote" : "View Final Bracket"}
-      </Link>
-    </div>
+        {isActive ? "View Bracket & Vote →" : "View Final Bracket"}
+      </div>
+    </Link>
   );
 }
 
