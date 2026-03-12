@@ -119,3 +119,26 @@ export function createTournament(name: string, tokens: Token[]): Tournament {
 export function getTotalRounds(size: 8 | 16): number {
   return Math.log2(size);
 }
+
+export function getWinner(tournament: Tournament): Token | null {
+  if (tournament.status !== "completed") return null;
+  const totalRounds = Math.log2(tournament.size);
+  const finalMatch = tournament.matches.find((m) => m.round === totalRounds);
+  if (!finalMatch?.winnerId) return null;
+  return finalMatch.winnerId === finalMatch.tokenA.mint
+    ? finalMatch.tokenA
+    : finalMatch.tokenB;
+}
+
+export function getParticipants(tournament: Tournament): Token[] {
+  const round1 = tournament.matches.filter((m) => m.round === 1);
+  return round1.flatMap((m) => [m.tokenA, m.tokenB]);
+}
+
+export function getRoundName(round: number, totalRounds: number): string {
+  const fromEnd = totalRounds - round + 1;
+  if (fromEnd === 1) return "Final";
+  if (fromEnd === 2) return "Semifinals";
+  if (fromEnd === 3) return "Quarterfinals";
+  return `Round ${round}`;
+}

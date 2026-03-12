@@ -4,18 +4,11 @@ import { useState } from "react";
 import type { Tournament, Match } from "@/types";
 import MatchCard from "./MatchCard";
 import Image from "next/image";
+import { getRoundName } from "@/lib/tournament";
 
 interface BracketProps {
   tournament: Tournament;
   onVote?: (matchId: string, tokenMint: string) => Promise<void>;
-}
-
-function getRoundName(round: number, totalRounds: number): string {
-  const fromEnd = totalRounds - round + 1;
-  if (fromEnd === 1) return "Final";
-  if (fromEnd === 2) return "Semifinals";
-  if (fromEnd === 3) return "Quarterfinals";
-  return `Round ${round}`;
 }
 
 // Desktop bracket column

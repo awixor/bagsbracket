@@ -1,16 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Tournament, Token } from "@/types";
-
-function getWinner(tournament: Tournament): Token | null {
-  if (tournament.status !== "completed") return null;
-  const totalRounds = Math.log2(tournament.size);
-  const finalMatch = tournament.matches.find((m) => m.round === totalRounds);
-  if (!finalMatch?.winnerId) return null;
-  return finalMatch.winnerId === finalMatch.tokenA.mint
-    ? finalMatch.tokenA
-    : finalMatch.tokenB;
-}
+import type { Tournament } from "@/types";
+import { getWinner } from "@/lib/tournament";
 
 export default function WinnerBanner({
   tournament,

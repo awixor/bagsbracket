@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import type { Tournament, Token } from "@/types";
+import { formatVolume } from "@/lib/format";
 
 interface LeaderboardProps {
   tournament: Tournament;
@@ -12,12 +13,6 @@ interface TokenEntry {
   volume: number;
   won: boolean;
   round: number;
-}
-
-function formatVolume(vol: number): string {
-  if (vol >= 1_000_000) return `$${(vol / 1_000_000).toFixed(2)}M`;
-  if (vol >= 1_000) return `$${(vol / 1_000).toFixed(1)}K`;
-  return `$${vol.toFixed(2)}`;
 }
 
 export default function Leaderboard({ tournament }: LeaderboardProps) {
@@ -71,7 +66,7 @@ export default function Leaderboard({ tournament }: LeaderboardProps) {
           >
             {/* Rank */}
             <div
-              className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-sm font-black ${
+              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-black ${
                 idx === 0
                   ? "bg-[#f5c542] text-[#0a0a0a]"
                   : "bg-white/10 text-white/50"
@@ -81,7 +76,7 @@ export default function Leaderboard({ tournament }: LeaderboardProps) {
             </div>
 
             {/* Logo */}
-            <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-white/10">
+            <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-white/10">
               {entry.token.logo ? (
                 <Image
                   src={entry.token.logo}
@@ -115,7 +110,7 @@ export default function Leaderboard({ tournament }: LeaderboardProps) {
 
             {/* Winner badge */}
             {entry.won && (
-              <span className="flex-shrink-0 rounded-full bg-[#f5c542]/20 px-2 py-0.5 text-xs font-bold text-[#f5c542]">
+              <span className="shrink-0 rounded-full bg-[#f5c542]/20 px-2 py-0.5 text-xs font-bold text-[#f5c542]">
                 W
               </span>
             )}

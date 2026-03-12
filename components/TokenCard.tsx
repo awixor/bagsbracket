@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import type { Token } from "@/types";
+import { formatVolume, formatPrice } from "@/lib/format";
 
 interface TokenCardProps {
   token: Token;
@@ -9,17 +10,6 @@ interface TokenCardProps {
   isLeading?: boolean;
   volumeInMatch?: number;
   showTradeButton?: boolean;
-}
-
-function formatVolume(vol: number): string {
-  if (vol >= 1_000_000) return `$${(vol / 1_000_000).toFixed(2)}M`;
-  if (vol >= 1_000) return `$${(vol / 1_000).toFixed(1)}K`;
-  return `$${vol.toFixed(2)}`;
-}
-
-function formatPrice(price: number): string {
-  if (price < 0.0001) return `$${price.toExponential(2)}`;
-  return `$${price.toFixed(4)}`;
 }
 
 export default function TokenCard({

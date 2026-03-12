@@ -5,17 +5,12 @@ import Image from "next/image";
 import type { Match } from "@/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { matchScores } from "@/lib/tournament";
+import { formatVolume } from "@/lib/format";
 
 interface MatchCardProps {
   match: Match;
   isActive?: boolean;
   onVote?: (matchId: string, tokenMint: string) => Promise<void>;
-}
-
-function formatVolume(vol: number): string {
-  if (vol >= 1_000_000) return `$${(vol / 1_000_000).toFixed(2)}M`;
-  if (vol >= 1_000) return `$${(vol / 1_000).toFixed(1)}K`;
-  return `$${vol.toFixed(2)}`;
 }
 
 const VOLUME_FLOOR = 100;
