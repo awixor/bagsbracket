@@ -1,0 +1,31 @@
+name: Auto-launch new tournament
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # Daily at midnight UTC
+  workflow_dispatch:       # Allow manual trigger from GitHub UI
+
+jobs:
+  launch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Launch tournament if enough tokens registered
+        run: |
+          response=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+            -X POST "${{ secrets.APP_URL }}/api/admin/launch" \
+            -H "x-admin-secret: ${{ secrets.ADMIN_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          cat /tmp/response.json
+          echo ""
+
+          # 400 means not enough approved tokens yet — that's expected, not an error
+          if [ "$response" == "400" ]; then
+            echo "Not enough approved tokens to launch. Skipping."
+            exit 0
+          fi
+
+          if [ "$response" != "200" ]; then
+            echo "Unexpected status $response"
+            exit 1
+          fi

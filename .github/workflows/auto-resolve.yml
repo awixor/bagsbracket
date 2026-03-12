@@ -1,0 +1,25 @@
+name: Auto-resolve tournament rounds
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # Every hour at :00
+  workflow_dispatch:       # Allow manual trigger from GitHub UI
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve due rounds
+        run: |
+          response=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+            -X POST "${{ secrets.APP_URL }}/api/admin/auto-resolve" \
+            -H "x-admin-secret: ${{ secrets.ADMIN_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          cat /tmp/response.json
+          echo ""
+
+          if [ "$response" != "200" ]; then
+            echo "Request failed with status $response"
+            exit 1
+          fi
