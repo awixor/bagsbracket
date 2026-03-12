@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Launch tournament if enough tokens registered
         run: |
-          response=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+          response=$(curl -s -L -o /tmp/response.json -w "%{http_code}" \
             -X POST "${{ secrets.APP_URL }}/api/admin/launch" \
             -H "x-admin-secret: ${{ secrets.ADMIN_SECRET }}" \
             -H "Content-Type: application/json")
